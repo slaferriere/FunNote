@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javafx.application.Application;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 /**
@@ -23,7 +24,7 @@ public class FunnoteView extends Application implements Observer{
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
+		BorderPane bp = new BorderPane();
 		
 	}
 
