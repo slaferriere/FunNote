@@ -13,7 +13,7 @@ public class FunnoteController {
 	 * @param page String of which page is requested
 	 */
 	public void changePage(String page) {
-		model.changePage();
+		model.changePage(page);
 	}
 	
 	/**
@@ -22,7 +22,7 @@ public class FunnoteController {
 	 * @param section Which section is requested
 	 */
 	public void changeSection(String section) {
-		model.changeSection();
+		model.changeSection(section);
 	}
 	
 	/**
@@ -31,7 +31,7 @@ public class FunnoteController {
 	 * @param notebook Which notebook to navigate to
 	 */
 	public void changeNotebook(String notebook) {
-		model.changeNotebook();
+		model.changeNotebook(notebook);
 	}
 	/**
 	 * This method tells the model to save the current notebook
