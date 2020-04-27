@@ -8,16 +8,19 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -25,6 +28,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 /**
@@ -44,18 +48,27 @@ public class FunnoteView extends Application implements Observer {
 	private ComboBox<String> fontColorBox;
 	private ComboBox<Integer> penSizesBox;
 	private ComboBox<String> penColorBox;
+	private ComboBox<String> shapesBox;
 	private ToolBar toolBar;
 	private Label fontSizeLabel = new Label("Font Size:");
 	private Label fontColorLabel = new Label("Font Color:");
 	private Label penSizeLabel = new Label("Pen Size:");
 	private Label penColorLabel = new Label("Pen Color:");
+	private Label shapesLabel = new Label("Shape:");
 	private int currentFontSize = 8;
 	private String currentFontColor = "Red";
 	private int currentPenSize = 5;
 	private String currentPenColor = "Red";
+	private String currentShape = "Free Draw";
 	private Integer fontSizes[] = {8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72};
 	private Integer penSizes[] = {5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24};
 	private String colors[] = {"Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "Black"};
+	private String shapes[] = {"Free Draw", "Oval", "Rectangle"};
+	private Button textBoxButton = new Button("Create TextBox");
+	private boolean textBoxClicked;
+	private double xCoord;
+	private double yCoord;
+	private double[] prevShape;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -66,36 +79,61 @@ public class FunnoteView extends Application implements Observer {
 		BorderPane window = new BorderPane();
 		
 		createMenuBar();
-		window.setTop(mainMenuBar);
 		
 		createToolBar();
-		window.setBottom(toolBar);
+		
+		window.setTop(new VBox(mainMenuBar, toolBar));
+		
 		
 		// Canvas setup
 		graphicsContext = canvas.getGraphicsContext2D();
+
 		
 		canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				graphicsContext.beginPath();
-				graphicsContext.moveTo(e.getX(), e.getY());
-				graphicsContext.stroke();
+				prevShape = new double[4];
+				xCoord = e.getX();
+				yCoord = e.getY();
+				if(currentShape.equals("Free Draw")) {
+					graphicsContext.beginPath();
+					graphicsContext.moveTo(xCoord, yCoord);
+					graphicsContext.stroke();					
+				}
 				draw(graphicsContext);
+				
 			}
 		});
 		
 		canvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				graphicsContext.lineTo(e.getX(), e.getY());
-				graphicsContext.stroke();
+				double newXCoord = e.getX();
+				double newYCoord = e.getY();
+				if(textBoxClicked) {
+					drawTextBox(graphicsContext, xCoord, yCoord, newXCoord, newYCoord);
+				}
+				else if (!currentShape.equals("Free Draw")) {
+					drawShape(graphicsContext, xCoord, yCoord, newXCoord, newYCoord);
+				}
+				else {
+					graphicsContext.lineTo(newXCoord, newYCoord);
+					graphicsContext.stroke();
+				}
 			}
 		});
 		
 		canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
+				textBoxClicked = false;
 			}
+		});
+		
+		textBoxButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent e) {
+		        textBoxClicked = true;
+		    }
 		});
 		
 		stackPane.setStyle("-fx-background-color: white");
@@ -129,8 +167,7 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	private void draw(GraphicsContext gc) {
-		double width = gc.getCanvas().getWidth();
-		double height = gc.getCanvas().getHeight();
+
 		
 		// Font color 
 		if (currentPenColor.equals("Red")) {
@@ -160,7 +197,41 @@ public class FunnoteView extends Application implements Observer {
 		}
 		
 		gc.setLineWidth(currentPenSize);
-		gc.fill();
+	//	gc.fill();
+	}
+	
+
+	// Working on this. Instead of drawing a textbox, the best approach would be to use gc.strokeText(). Just
+	// not 100% sure how to implement that.
+	
+	private void drawTextBox(GraphicsContext gc, double startX, double startY, double endX, double endY) {
+		TextArea textArea = new TextArea();
+		textArea.setPrefSize(Math.abs(startX - endX), Math.abs(startY - endY));
+	}
+	
+	
+	// This method draws the specified shape. It clears the previous shape so the user can drag and drop. Only issue is when
+	// two shapes overlap it clears the one under.
+	private void drawShape(GraphicsContext gc, double startX, double startY, double endX, double endY) {
+		
+		gc.clearRect(prevShape[0], prevShape[1], prevShape[2], prevShape[3]);
+		
+		double x = Math.min(startX, endX);
+		double y = Math.min(startY, endY);
+		double width = Math.abs(startX - endX);
+		double height = Math.abs(startY - endY);
+
+		
+		if(currentShape.equals("Rectangle")) {
+			gc.fillRect(x, y, width, height);
+		} else if(currentShape.equals("Oval")) {
+			gc.fillOval(x, y, width, height);
+		}
+		
+		prevShape[0] = x;
+		prevShape[1] = y;
+		prevShape[2] = width;
+		prevShape[3] = height;
 	}
 	
 	/**
@@ -192,7 +263,7 @@ public class FunnoteView extends Application implements Observer {
 		home.getItems().addAll(savePage, clearPage);
 		insert.getItems().addAll(newPage);
 		mainMenuBar.getMenus().addAll(home, insert);
-		mainMenuBar.setStyle("-fx-background-color: #BA55D3");
+		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
 	
 	/**
@@ -221,7 +292,7 @@ public class FunnoteView extends Application implements Observer {
 		fontColorBox.valueProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				// newValue is the newly selected color
+				currentFontColor = newValue;
 			}
 		});
 		
@@ -247,7 +318,17 @@ public class FunnoteView extends Application implements Observer {
 			}
 		});
 		
-		toolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox, penSizeLabel, penSizesBox, penColorLabel, penColorBox);
+		shapesBox = new ComboBox<String>(FXCollections.observableArrayList(shapes));
+		shapesBox.getSelectionModel().selectFirst();
+		shapesBox.valueProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				// newValue is the newly selected pen color
+				currentShape = newValue;
+			}
+		});
+		
+		toolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox, penSizeLabel, penSizesBox, penColorLabel, penColorBox, shapesLabel, shapesBox, textBoxButton);
 		toolBar.setStyle("-fx-background-color: #BA55D3");
 	}
 }
