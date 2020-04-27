@@ -20,9 +20,13 @@ public class Section implements Serializable {
 		pages = new HashMap<String, Page>();
 	}
 
-	public GraphicsContext changePage(String page) {
+	public Page changePage(String page) {
 		this.currPage = pages.get(page);
-		return this.currPage.getGraphicsContext();
+		return currPage;
+	}
+	
+	public GraphicsContext getGC() {
+		return currPage.getGraphicsContext();
 	}
 	
 	public void updatePage(GraphicsContext gc) {

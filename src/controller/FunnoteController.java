@@ -12,17 +12,8 @@ public class FunnoteController {
 	 * This method will change the page to the string passed to it
 	 * @param page String of which page is requested
 	 */
-	public void changePage(String page) {
-		model.changePage(page);
-	}
-	
-	/**
-	 * This method will change which section is currently being
-	 * observed by the view, and update that in the model
-	 * @param section Which section is requested
-	 */
-	public void changeSection(String section) {
-		model.changeSection(section);
+	public void changePage(String notebook, String section, String page) {
+		model.changePage(notebook, section, page);
 	}
 	
 	/**

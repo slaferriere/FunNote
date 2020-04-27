@@ -18,7 +18,7 @@ public class Notebook implements Serializable {
 		this.sections = new HashMap<String, Section>();
 	}
 	
-	public GraphicsContext changePage(String section, String page) {
+	public Page changePage(String section, String page) {
 		this.currSection = sections.get(section);
 		return this.currSection.changePage(page);
 	}
@@ -27,7 +27,12 @@ public class Notebook implements Serializable {
 		this.sections.put(section, new Section());
 	}
 	
-	public void addPage(String section, String page, GraphicsContext gc) ) {
-		
+	public void addPage(String section, String page, GraphicsContext gc) {
+		this.sections.get(section).addPage(page, gc);
+	}
+	
+	public Section getSection(String section) {
+		this.currSection = this.sections.get(section);
+		return this.currSection;
 	}
 }
