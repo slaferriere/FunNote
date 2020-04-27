@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Observable;
 
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.canvas.Canvas;
 
 public class FunnoteModel extends Observable {
 	
@@ -16,8 +16,8 @@ public class FunnoteModel extends Observable {
 		
 	}
 	
-	public GraphicsContext getCurrGC() {
-		return currNotebook.currSection.currPage.getGraphicsContext();
+	public Canvas getCurrGC() {
+		return currNotebook.currSection.currPage.getCanvas();
 	}
 	
 	public void changePage(String notebook, String section, String page) {
@@ -33,7 +33,7 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers(notebook);
 	}
 	
-	public void save() {
-		
+	public void save(Canvas canvas) {
+		currNotebook.currSection.currPage.updateCanvas(canvas);
 	}
 }

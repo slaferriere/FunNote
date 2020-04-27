@@ -3,7 +3,7 @@ package model;
 import java.util.Map;
 import java.util.HashMap;
 
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.canvas.Canvas;
 
 import java.io.Serializable;
 
@@ -25,16 +25,16 @@ public class Section implements Serializable {
 		return currPage;
 	}
 	
-	public GraphicsContext getGC() {
-		return currPage.getGraphicsContext();
+	public Canvas getGC() {
+		return currPage.getCanvas();
 	}
 	
-	public void updatePage(GraphicsContext gc) {
-		this.currPage.updateGraphicsContext(gc);
+	public void updatePage(Canvas canvas) {
+		this.currPage.updateCanvas(canvas);
 	}
 	
-	public void addPage(String page, GraphicsContext gc) {
-		pages.put(page, new Page(gc));
+	public void addPage(String page, Canvas canvas) {
+		pages.put(page, new Page(canvas));
 		currPage = pages.get(page);
 	}
 

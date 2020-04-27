@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.HashMap;
 
-import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.canvas.Canvas;
 
 public class Notebook implements Serializable {
 	
@@ -27,8 +27,8 @@ public class Notebook implements Serializable {
 		this.sections.put(section, new Section());
 	}
 	
-	public void addPage(String section, String page, GraphicsContext gc) {
-		this.sections.get(section).addPage(page, gc);
+	public void addPage(String section, String page, Canvas canvas) {
+		this.sections.get(section).addPage(page, canvas);
 	}
 	
 	public Section getSection(String section) {
