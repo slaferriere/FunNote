@@ -1,33 +1,31 @@
 package model;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Observable;
 
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
-	private Section currSection;
-	private Page currPage;
 	
-	private List<Notebook> notebooks = new LinkedList<Notebook>();
+	private Map<String, Notebook> notebooks = new HashMap<String, Notebook>();
 	
 	public FunnoteModel() {
 		
 	}
 	
 	
-	public void changePage(String page) {
+	public GraphicsContext changePage(String Notebook, String section, String page) {
+		return currNotebook.getSection(section).changePage(page);
+	}
+	
+	
+	public GraphicsContext changeSection(String section) {
 		
 	}
 	
 	
-	public void changeSection(String section) {
-		
-	}
-	
-	
-	public void changeNotebook(String notebook) {
+	public GraphicsContext changeNotebook(String notebook) {
 		
 	}
 	
