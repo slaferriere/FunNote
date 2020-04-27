@@ -16,10 +16,20 @@ public class FunnoteModel extends Observable {
 		
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Canvas getCurrGC() {
 		return currNotebook.currSection.currPage.getCanvas();
 	}
 	
+	/**
+	 * 
+	 * @param notebook
+	 * @param section
+	 * @param page
+	 */
 	public void changePage(String notebook, String section, String page) {
 		this.currNotebook = this.notebooks.get(notebook);
 		Page newPage = currNotebook.getSection(section).changePage(page);
@@ -27,12 +37,20 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers(newPage);
 	}
 	
+	/**
+	 * 
+	 * @param notebook
+	 */
 	public void changeNotebook(String notebook) {
 		this.currNotebook = this.notebooks.get(notebook);
 		this.setChanged();
 		this.notifyObservers(notebook);
 	}
 	
+	/**
+	 * 
+	 * @param canvas
+	 */
 	public void save(Canvas canvas) {
 		currNotebook.currSection.currPage.updateCanvas(canvas);
 	}
