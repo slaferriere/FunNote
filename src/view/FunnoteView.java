@@ -89,6 +89,7 @@ public class FunnoteView extends Application implements Observer {
 	private boolean insertImage;
 	private Image image;
 	private ImageView imageView;
+	private String currPageFilePath;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -276,11 +277,18 @@ public class FunnoteView extends Application implements Observer {
 		// File Menu
 		Menu home = new Menu("Home");
 		Menu insert = new Menu("Insert");
+		Menu change = new Menu("Switch");
 		
 		// Create menu items
+		MenuItem changeNotebook = new MenuItem("Notebook");
+		MenuItem changeSection = new MenuItem("Section");
+		MenuItem changePage = new MenuItem("Page");
+		
 		MenuItem newPage = new MenuItem("New");
 		MenuItem newImage = new MenuItem("Image");
+		
 		MenuItem clearPage = new MenuItem("Clear");
+		MenuItem saveAsPage = new MenuItem("Save As");
 		MenuItem savePage = new MenuItem("Save");
 		
 		// When user selects to create a new page
@@ -310,6 +318,10 @@ public class FunnoteView extends Application implements Observer {
 		});	
 		
 		savePage.setOnAction(e -> {
+			
+		});
+		
+		saveAsPage.setOnAction(e -> {
 			// When user selects to save their current page
 			FileChooser fileChooser = new FileChooser();
             
@@ -333,10 +345,23 @@ public class FunnoteView extends Application implements Observer {
             }
 		});	
 		
+		changeNotebook.setOnAction(e -> {
+			
+		});
+		
+		changeSection.setOnAction(e-> {
+			
+		});
+		
+		changePage.setOnAction(e -> {
+			
+		});
+		
 		// Add menu items to file dropdown
-		home.getItems().addAll(savePage, clearPage);
+		change.getItems().addAll(changeNotebook, changeSection, changePage);
+		home.getItems().addAll(savePage, saveAsPage, clearPage);
 		insert.getItems().addAll(newPage, newImage);
-		mainMenuBar.getMenus().addAll(home, insert);
+		mainMenuBar.getMenus().addAll(home, insert, change);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
 	
