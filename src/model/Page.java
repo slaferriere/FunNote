@@ -11,11 +11,11 @@ public class Page implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	protected String canvasURL;
-	protected List<ImageNode> images;
+	protected List<TextboxNode> textboxes;
 	
 	public Page(String canvasURL) {
 		this.canvasURL = canvasURL;
-		this.images = new LinkedList<ImageNode>();
+		this.textboxes = new LinkedList<TextboxNode>();
 	}
 	
 	public String getCanvasURL() {
