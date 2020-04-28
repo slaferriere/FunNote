@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 /**
  * This is the main class that displays everything on the screen. It will update the controller
  * when any changes are made by the user
+ * 
  * @author Michael Tuohy, Trevor Freudig, Alexander Thompson, Scott LaFerriere
  *
  */
