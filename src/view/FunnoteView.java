@@ -2,6 +2,8 @@ package view;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
@@ -19,6 +21,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -26,7 +30,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -78,6 +85,10 @@ public class FunnoteView extends Application implements Observer {
 	private double yCoord;
 	private double[] prevShape;
 	private Stage mainStage;
+	private String imageUrl;
+	private boolean insertImage;
+	private Image image;
+	private ImageView imageView;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -105,10 +116,24 @@ public class FunnoteView extends Application implements Observer {
 				prevShape = new double[4];
 				xCoord = e.getX();
 				yCoord = e.getY();
-				if(currentShape.equals("Free Draw")) {
+				if(currentShape.equals("Free Draw") && (insertImage == false)) {
 					graphicsContext.beginPath();
 					graphicsContext.moveTo(xCoord, yCoord);
 					graphicsContext.stroke();					
+				} else if (insertImage) {
+					// Display image wherever the user clicks.
+					try {
+						image = new Image(imageUrl);
+					} catch (Exception e2) {
+						Alert alert = new Alert(AlertType.WARNING);
+						alert.setTitle("WARNING");
+						alert.setHeaderText("File Path Error");
+						alert.setContentText("Please try again.");
+						e2.printStackTrace();
+					}
+					
+					graphicsContext.drawImage(image, e.getX(), e.getY());
+					insertImage = false;
 				}
 				draw(graphicsContext);
 				
@@ -254,11 +279,30 @@ public class FunnoteView extends Application implements Observer {
 		
 		// Create menu items
 		MenuItem newPage = new MenuItem("New");
+		MenuItem newImage = new MenuItem("Image");
 		MenuItem clearPage = new MenuItem("Clear");
 		MenuItem savePage = new MenuItem("Save");
 		
+		// When user selects to create a new page
 		newPage.setOnAction(e -> {
-			// When user selects to create a new page
+			
+		});
+		
+		// When user selects to insert a new image
+		newImage.setOnAction(e -> {
+			TextInputDialog input = new TextInputDialog("IMAGE URL HERE");
+			input.setTitle("Insert Image");
+			input.showAndWait();
+			
+			imageUrl = input.getEditor().getText();
+			
+			Alert alert = new Alert(AlertType.INFORMATION);
+			alert.setTitle("INFORMATION");
+			alert.setHeaderText("NOTE:");
+			alert.setContentText("Click anywhere on main screen to display your image.");
+			alert.showAndWait();
+			
+			insertImage = true;
 		});
 		
 		clearPage.setOnAction(e -> {
@@ -291,7 +335,7 @@ public class FunnoteView extends Application implements Observer {
 		
 		// Add menu items to file dropdown
 		home.getItems().addAll(savePage, clearPage);
-		insert.getItems().addAll(newPage);
+		insert.getItems().addAll(newPage, newImage);
 		mainMenuBar.getMenus().addAll(home, insert);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
