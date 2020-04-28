@@ -3,8 +3,6 @@ package model;
 import java.util.Map;
 import java.util.HashMap;
 
-import javafx.scene.canvas.Canvas;
-
 import java.io.Serializable;
 
 public class Section implements Serializable {
@@ -25,16 +23,16 @@ public class Section implements Serializable {
 		return currPage;
 	}
 	
-	public Canvas getGC() {
-		return currPage.getCanvas();
+	public String getCanvasURL() {
+		return currPage.getCanvasURL();
 	}
 	
-	public void updatePage(Canvas canvas) {
-		this.currPage.updateCanvas(canvas);
+	public void updatePage(String canvasURL) {
+		this.currPage.updateCanvasURL(canvasURL);
 	}
 	
-	public void addPage(String page, Canvas canvas) {
-		pages.put(page, new Page(canvas));
+	public void addPage(String page, String canvasURL) {
+		pages.put(page, new Page(canvasURL));
 		currPage = pages.get(page);
 	}
 

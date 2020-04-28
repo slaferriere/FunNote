@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.scene.canvas.Canvas;
-
 import model.FunnoteModel;
 
 public class FunnoteController {
@@ -30,7 +28,7 @@ public class FunnoteController {
 	/**
 	 * This method tells the model to save the current notebook
 	 */
-	public void save(Canvas canvas) {
-		model.save(canvas);
+	public void save(String canvasURL) {
+		model.save(canvasURL);
 	}
 }

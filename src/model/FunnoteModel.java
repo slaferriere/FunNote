@@ -4,8 +4,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Observable;
 
-import javafx.scene.canvas.Canvas;
-
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
@@ -20,8 +18,8 @@ public class FunnoteModel extends Observable {
 	 * 
 	 * @return
 	 */
-	public Canvas getCurrGC() {
-		return currNotebook.currSection.currPage.getCanvas();
+	public String getCurrGC() {
+		return currNotebook.currSection.currPage.getCanvasURL();
 	}
 	
 	/**
@@ -51,7 +49,7 @@ public class FunnoteModel extends Observable {
 	 * 
 	 * @param canvas
 	 */
-	public void save(Canvas canvas) {
-		currNotebook.currSection.currPage.updateCanvas(canvas);
+	public void save(String canvasURL) {
+		currNotebook.currSection.currPage.updateCanvasURL(canvasURL);
 	}
 }
