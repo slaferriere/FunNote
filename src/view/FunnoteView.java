@@ -1,13 +1,18 @@
 package view;
 
+import java.awt.image.RenderedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.imageio.ImageIO;
 
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -22,6 +27,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -29,6 +35,7 @@ import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 /**
@@ -70,6 +77,7 @@ public class FunnoteView extends Application implements Observer {
 	private double xCoord;
 	private double yCoord;
 	private double[] prevShape;
+	private Stage mainStage;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -77,6 +85,7 @@ public class FunnoteView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		mainStage = primaryStage;
 		BorderPane window = new BorderPane();
 		
 		createMenuBar();
@@ -258,6 +267,26 @@ public class FunnoteView extends Application implements Observer {
 		
 		savePage.setOnAction(e -> {
 			// When user selects to save their current page
+			FileChooser fileChooser = new FileChooser();
+            
+            //Set extension filter
+            FileChooser.ExtensionFilter extFilter = 
+                    new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
+            fileChooser.getExtensionFilters().add(extFilter);
+           
+            //Show save file dialog
+            File file = fileChooser.showSaveDialog(mainStage);
+             
+            if(file != null){
+                try {
+                    WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
+                    canvas.snapshot(null, writableImage);
+                    RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
+                    ImageIO.write(renderedImage, "png", file);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
 		});	
 		
 		// Add menu items to file dropdown
