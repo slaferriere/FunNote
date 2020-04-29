@@ -9,9 +9,7 @@ import java.util.Observable;
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
-	
-	private Map<String, Notebook> notebooks = new HashMap<String, Notebook>();
-	
+		
 	public FunnoteModel() {
 		
 	}
@@ -42,6 +40,32 @@ public class FunnoteModel extends Observable {
 		}
 	}
 	
+	public void createSection(String sectionName) {
+		currNotebook.addSection(sectionName);
+	}
+	
+	public void createPage(String page) {
+		currNotebook.currSection.addPage(page);
+	}
+	
+	public void addCurrentPage(String page, String canvasURL) {
+		currNotebook.currSection.addPage(page, canvasURL);
+	}
+	
+	public boolean hasSection() {
+		if(currNotebook == null) {
+			return false;
+		} else if(currNotebook.currSection == null) {
+			return false;
+		}
+		return true;
+	}
+	
+	public boolean hasNotebook() {
+		System.out.println("here");
+		return currNotebook != null;
+	}
+	
 	/**
 	 * 
 	 * @param notebook
@@ -49,10 +73,7 @@ public class FunnoteModel extends Observable {
 	 * @param page
 	 */
 	public void changePage(String notebook, String section, String page) {
-		this.currNotebook = this.notebooks.get(notebook);
-		Page newPage = currNotebook.getSection(section).changePage(page);
-		this.setChanged();
-		this.notifyObservers(newPage);
+		// TODO: load page
 	}
 	
 	/**
@@ -60,9 +81,7 @@ public class FunnoteModel extends Observable {
 	 * @param notebook
 	 */
 	public void changeNotebook(String notebook) {
-		this.currNotebook = this.notebooks.get(notebook);
-		this.setChanged();
-		this.notifyObservers(notebook);
+		// TODO: load notebook
 	}
 	
 	/**

@@ -460,24 +460,40 @@ public class FunnoteView extends Application implements Observer {
 		});
 		
 		createSection.setOnAction(e -> {
-			TextInputDialog section = new TextInputDialog("Enter Any Text Here");
-			section.setHeaderText("Enter Name of Section Here");
-			section.showAndWait();
-			String sectionName = section.getEditor().getText();
-			if(sectionName.compareTo("Enter Any Text Here") == 0) {}
-			else {
-				controller.addNewSection(sectionName);
+			if(!controller.hasNotebook()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("NOTE:");
+				alert.setContentText("Create a Notebook First");
+				alert.showAndWait();
+			} else {
+				TextInputDialog section = new TextInputDialog("Enter Any Text Here");
+				section.setHeaderText("Enter Name of Section Here");
+				section.showAndWait();
+				String sectionName = section.getEditor().getText();
+				if(sectionName.compareTo("Enter Any Text Here") == 0) {}
+				else {
+					controller.addNewSection(sectionName);
+				}
 			}
 		});
 		
 		createPage.setOnAction(e -> {
-			TextInputDialog page = new TextInputDialog("Enter Any Text Here");
-			page.setHeaderText("Enter Name of Page Here");
-			page.showAndWait();
-			String pageName = page.getEditor().getText();
-			if(pageName.compareTo("Enter Any Text Here") == 0) {}
-			else {
-				controller.addNewPage(pageName);
+			if(!controller.hasSection()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("NOTE:");
+				alert.setContentText("Create a Section First");
+				alert.showAndWait();
+			} else {
+				TextInputDialog page = new TextInputDialog("Enter Any Text Here");
+				page.setHeaderText("Enter Name of Page Here");
+				page.showAndWait();
+				String pageName = page.getEditor().getText();
+				if(pageName.compareTo("Enter Any Text Here") == 0) {}
+				else {
+					controller.addNewPage(pageName);
+				}
 			}
 			
 		});

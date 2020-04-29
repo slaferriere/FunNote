@@ -13,6 +13,10 @@ public class Page implements Serializable{
 	protected String canvasURL;
 	protected List<TextboxNode> textboxes;
 	
+	public Page() {
+		this.textboxes = new LinkedList<TextboxNode>();
+	}
+	
 	public Page(String canvasURL) {
 		this.canvasURL = canvasURL;
 		this.textboxes = new LinkedList<TextboxNode>();

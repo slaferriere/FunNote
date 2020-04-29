@@ -17,11 +17,23 @@ public class FunnoteController {
 	}
 	
 	public void addNewSection(String sectionName) {
-		
+		model.createSection(sectionName);
 	}
 	
 	public void addNewPage(String pageName) {
-		
+		model.createPage(pageName);
+	}
+	
+	public void addCurrentPage(String pageName, String canvasURL) {
+		model.addCurrentPage(pageName, canvasURL);
+	}
+	
+	public boolean hasNotebook() {
+		return model.hasNotebook();
+	}
+	
+	public boolean hasSection() {
+		return model.hasSection();
 	}
 	
 	/**

@@ -31,6 +31,10 @@ public class Section implements Serializable {
 		this.currPage.updateCanvasURL(canvasURL);
 	}
 	
+	public void addPage(String page) {
+		pages.put(page, new Page());
+	}
+	
 	public void addPage(String page, String canvasURL) {
 		pages.put(page, new Page(canvasURL));
 		currPage = pages.get(page);

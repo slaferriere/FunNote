@@ -26,6 +26,7 @@ public class Notebook implements Serializable {
 	
 	public void addSection(String section) {
 		this.sections.put(section, new Section());
+		currSection = this.sections.get(section);
 	}
 	
 	public void addPage(String section, String page, String canvasURL) {
