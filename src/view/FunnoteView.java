@@ -349,6 +349,7 @@ public class FunnoteView extends Application implements Observer {
 		Menu home = new Menu("Home");
 		Menu insert = new Menu("Insert");
 		Menu change = new Menu("Switch");
+		Menu create = new Menu("Create");
 		
 		// Create menu items
 		MenuItem changeNotebook = new MenuItem("Notebook");
@@ -361,6 +362,10 @@ public class FunnoteView extends Application implements Observer {
 		MenuItem clearPage = new MenuItem("Clear");
 		MenuItem saveAsPage = new MenuItem("Save As");
 		MenuItem savePage = new MenuItem("Save");
+		
+		MenuItem createNotebook = new MenuItem("New Notebook");
+		MenuItem createSection = new MenuItem("New Section");
+		MenuItem createPage = new MenuItem("New Page");
 		
 		// When user selects to create a new page
 		newPage.setOnAction(e -> {
@@ -428,11 +433,24 @@ public class FunnoteView extends Application implements Observer {
 			
 		});
 		
+		createNotebook.setOnAction(e -> {
+			FunnoteFileCreator setup = new FunnoteFileCreator();
+			Scene notebookCreator = new Scene(setup);
+		});
+		
+		createSection.setOnAction(e -> {
+			
+		});
+		
+		createPage.setOnAction(e -> {
+			
+		});
 		// Add menu items to file dropdown
+		create.getItems().addAll(createNotebook, createSection, createPage);
 		change.getItems().addAll(changeNotebook, changeSection, changePage);
 		home.getItems().addAll(savePage, saveAsPage, clearPage);
 		insert.getItems().addAll(newPage, newImage);
-		mainMenuBar.getMenus().addAll(home, insert, change);
+		mainMenuBar.getMenus().addAll(home, insert, change, create);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
 	
