@@ -371,7 +371,8 @@ public class FunnoteView extends Application implements Observer {
 		
 		MenuItem createNotebook = new MenuItem("New Notebook");
 		MenuItem createSection = new MenuItem("New Section");
-		MenuItem createPage = new MenuItem("New Page");
+		MenuItem createNewPage = new MenuItem("New Page");
+		MenuItem addCurrPage = new MenuItem("Add Current Page");
 		
 		// When user selects to create a new page
 		newPage.setOnAction(e -> {
@@ -478,7 +479,7 @@ public class FunnoteView extends Application implements Observer {
 			}
 		});
 		
-		createPage.setOnAction(e -> {
+		createNewPage.setOnAction(e -> {
 			if(!controller.hasSection()) {
 				Alert alert = new Alert(AlertType.ERROR);
 				alert.setTitle("ERROR");
@@ -497,8 +498,37 @@ public class FunnoteView extends Application implements Observer {
 			}
 			
 		});
+		
+		addCurrPage.setOnAction(e -> {
+			if(!controller.hasSection()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("NOTE:");
+				alert.setContentText("Create a Section First");
+				alert.showAndWait();
+			} else {
+				TextInputDialog page = new TextInputDialog("Enter Any Text Here");
+				page.setHeaderText("Enter Name of Page Here");
+				page.showAndWait();
+				String pageName = page.getEditor().getText();
+				if(pageName.compareTo("Enter Any Text Here") == 0) {}
+				else {
+					WritableImage image = new WritableImage(
+							(int) canvas.getWidth(), (int) canvas.getHeight());
+					canvas.snapshot(null, image);
+					RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
+					try {
+						controller.addCurrentPage(pageName, renderedImage);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		
 		// Add menu items to file dropdown
-		create.getItems().addAll(createNotebook, createSection, createPage);
+		create.getItems().addAll(createNotebook, createSection, createNewPage, addCurrPage);
 		change.getItems().addAll(changeNotebook, changeSection, changePage);
 		home.getItems().addAll(savePage, saveAsPage, clearPage);
 		insert.getItems().addAll(newPage, newImage);

@@ -1,10 +1,13 @@
 package model;
 
 import java.util.Map;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
+
+import javax.imageio.ImageIO;
 
 public class FunnoteModel extends Observable {
 	
@@ -48,8 +51,16 @@ public class FunnoteModel extends Observable {
 		currNotebook.currSection.addPage(page);
 	}
 	
-	public void addCurrentPage(String page, String canvasURL) {
-		currNotebook.currSection.addPage(page, canvasURL);
+	public void addCurrentPage(String page, RenderedImage image) throws IOException {
+		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
+		if(!photoLib.isDirectory()) {
+			throw new IOException();
+		}
+		File imageWritten = new File(photoLib.getAbsolutePath() + File.separator + "page_" +
+							Integer.toString(currNotebook.getNumPages()));
+		ImageIO.write(image, "png", imageWritten);
+		currNotebook.currSection.addPage(page, imageWritten.getAbsolutePath());
+		
 	}
 	
 	public boolean hasSection() {

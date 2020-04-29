@@ -12,11 +12,16 @@ public class Notebook implements Serializable {
 	private static final long serialVersionUID = 1L;
 	protected Map<String, Section> sections;
 	protected Section currSection;
-	protected File location;
+	protected String location;
+	private int numPages = 0;
 	
 	public Notebook(File location) {
 		this.sections = new HashMap<String, Section>();
-		this.location = location;
+		this.location = location.getAbsolutePath();
+	}
+	
+	public int getNumPages() {
+		return numPages++;
 	}
 	
 	public Page changePage(String section, String page) {

@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.awt.image.RenderedImage;
 
 import model.FunnoteModel;
 
@@ -12,7 +13,7 @@ public class FunnoteController {
 		this.model = model;
 	}
 	
-	public void addNewNotebook(String notebookName, File dir) throws IOException{
+	public void addNewNotebook(String notebookName, File dir) throws IOException {
 		model.createNotebook(notebookName, dir);
 	}
 	
@@ -24,8 +25,8 @@ public class FunnoteController {
 		model.createPage(pageName);
 	}
 	
-	public void addCurrentPage(String pageName, String canvasURL) {
-		model.addCurrentPage(pageName, canvasURL);
+	public void addCurrentPage(String pageName, RenderedImage image) throws IOException {
+		model.addCurrentPage(pageName, image);
 	}
 	
 	public boolean hasNotebook() {
