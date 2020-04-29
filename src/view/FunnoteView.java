@@ -126,7 +126,7 @@ public class FunnoteView extends Application implements Observer {
 			public void handle(MouseEvent e) {
 				xCoord = e.getX();
 				yCoord = e.getY();
-				text = new Text("Type stuff");
+				text = new Text();
 				text.setX(xCoord);
 				text.setY(yCoord);
 				text.setFont(Font.font(currentFontSize));
@@ -203,6 +203,7 @@ public class FunnoteView extends Application implements Observer {
 		    	} else {
 			    	textBoxButton.setEffect(new DropShadow());
 			        textBoxClicked = true;
+			        pane.requestFocus();
 		    	}
 		    	changeTop();
 		    }
