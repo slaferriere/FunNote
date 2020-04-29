@@ -1,5 +1,8 @@
 package controller;
 
+import java.io.File;
+import java.io.IOException;
+
 import model.FunnoteModel;
 
 public class FunnoteController {
@@ -7,6 +10,18 @@ public class FunnoteController {
 	
 	public FunnoteController(FunnoteModel model) {
 		this.model = model;
+	}
+	
+	public void addNewNotebook(String notebookName, File dir) throws IOException{
+		model.createNotebook(notebookName, dir);
+	}
+	
+	public void addNewSection(String sectionName) {
+		
+	}
+	
+	public void addNewPage(String pageName) {
+		
 	}
 	
 	/**
@@ -30,5 +45,9 @@ public class FunnoteController {
 	 */
 	public void save(String canvasURL) {
 		model.save(canvasURL);
+	}
+	
+	public FunnoteModel getModel() {
+		return this.model;
 	}
 }

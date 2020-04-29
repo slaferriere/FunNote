@@ -1,6 +1,8 @@
 package model;
 
 import java.util.Map;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Observable;
 
@@ -20,6 +22,24 @@ public class FunnoteModel extends Observable {
 	 */
 	public String getCurrGC() {
 		return currNotebook.currSection.currPage.getCanvasURL();
+	}
+	
+	public void createNotebook(String name, File dir) throws IOException {
+		String path = dir.getAbsolutePath() + File.separator + name;
+		File newNotebook = new File(path);
+		if(newNotebook.mkdir()) {
+			File photoLib = new File(path + File.separator + "pageImages");
+			if(!photoLib.mkdir()) {
+				throw new IOException();
+			}
+			File notebookF = new File(path + File.separator + name + ".funnote");
+			if(!notebookF.createNewFile()) {
+				throw new IOException();
+			}
+			currNotebook = new Notebook(newNotebook);
+		} else {
+			throw new IOException();
+		}
 	}
 	
 	/**

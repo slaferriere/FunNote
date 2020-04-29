@@ -10,6 +10,7 @@ import java.util.Observer;
 
 import javax.imageio.ImageIO;
 
+import controller.FunnoteController;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -50,8 +51,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.FunnoteModel;
 
 /**
  * This is the main class that displays everything on the screen. It will update the controller
@@ -101,6 +105,7 @@ public class FunnoteView extends Application implements Observer {
 	private ImageView imageView;
 	private String currPageFilePath;
 	private Text text;
+	private FunnoteController controller = new FunnoteController(new FunnoteModel());
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -108,6 +113,7 @@ public class FunnoteView extends Application implements Observer {
 	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		controller.getModel().addObserver(this);
 		mainStage = primaryStage;
 		BorderPane window = new BorderPane();
 		
@@ -434,15 +440,45 @@ public class FunnoteView extends Application implements Observer {
 		});
 		
 		createNotebook.setOnAction(e -> {
-			FunnoteFileCreator setup = new FunnoteFileCreator();
-			Scene notebookCreator = new Scene(setup);
+			TextInputDialog notebook = new TextInputDialog("Enter Any Text Here");
+			notebook.setHeaderText("Enter Name of Notebook Here");
+			notebook.showAndWait();
+			String notebookName = notebook.getEditor().getText();
+			if(notebookName.compareTo("Enter Any Text Here") == 0) {}
+			else {
+				DirectoryChooser dirChoose = new DirectoryChooser();
+				File dir = dirChoose.showDialog(mainStage);
+				
+				if(dir != null) {
+					try {
+						controller.addNewNotebook(notebookName, dir);
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+				}
+			}
 		});
 		
 		createSection.setOnAction(e -> {
-			
+			TextInputDialog section = new TextInputDialog("Enter Any Text Here");
+			section.setHeaderText("Enter Name of Section Here");
+			section.showAndWait();
+			String sectionName = section.getEditor().getText();
+			if(sectionName.compareTo("Enter Any Text Here") == 0) {}
+			else {
+				controller.addNewSection(sectionName);
+			}
 		});
 		
 		createPage.setOnAction(e -> {
+			TextInputDialog page = new TextInputDialog("Enter Any Text Here");
+			page.setHeaderText("Enter Name of Page Here");
+			page.showAndWait();
+			String pageName = page.getEditor().getText();
+			if(pageName.compareTo("Enter Any Text Here") == 0) {}
+			else {
+				controller.addNewPage(pageName);
+			}
 			
 		});
 		// Add menu items to file dropdown

@@ -15,10 +15,11 @@ public class FunnoteFileCreator extends Stage {
 	private String sectionName;
 	private String pageName;
 	private boolean choose = false;
+	private BorderPane bp;
 	
 	public FunnoteFileCreator() {
 		setTitle("Make New Notebook");
-		BorderPane bp = new BorderPane();
+		bp = new BorderPane();
 		
 		VBox vbox = new VBox();
 		
@@ -43,6 +44,12 @@ public class FunnoteFileCreator extends Stage {
 		HBox confirmButtons = new HBox();
 		Button ok = new Button("Done");
 		Button cancel = new Button("Cancel");
+		confirmButtons.getChildren().addAll(ok, cancel);
+		confirmButtons.setAlignment(Pos.CENTER);
+		
+		vbox.getChildren().addAll(notebookField, sectionField, pageField, confirmButtons);
+		
+		bp.setCenter(vbox);
 		
 		ok.setOnAction(e -> {
 			// Do something
@@ -56,6 +63,10 @@ public class FunnoteFileCreator extends Stage {
 		});
 	}
 	
+	public BorderPane getBorderPane() {
+		return bp;
+	}
+	
 	public FunnoteFileCreator(String notebookName) {
 		setTitle("Make New Section");
 		
@@ -65,7 +76,7 @@ public class FunnoteFileCreator extends Stage {
 		setTitle("Make New Page");
 	}
 	
-	public boolean choose() {
+	public boolean getChoose() {
 		return this.choose;
 	}
 }
