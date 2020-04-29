@@ -366,7 +366,6 @@ public class FunnoteView extends Application implements Observer {
 		MenuItem newImage = new MenuItem("Image");
 		
 		MenuItem clearPage = new MenuItem("Clear");
-		MenuItem saveAsPage = new MenuItem("Save As");
 		MenuItem savePage = new MenuItem("Save");
 		
 		MenuItem createNotebook = new MenuItem("New Notebook");
@@ -432,30 +431,6 @@ public class FunnoteView extends Application implements Observer {
 				}
 			}
 		});
-		
-		saveAsPage.setOnAction(e -> {
-			// When user selects to save their current page
-			FileChooser fileChooser = new FileChooser();
-            
-            //Set extension filter
-            FileChooser.ExtensionFilter extFilter = 
-                    new FileChooser.ExtensionFilter("png files (*.png)", "*.png");
-            fileChooser.getExtensionFilters().add(extFilter);
-           
-            //Show save file dialog
-            File file = fileChooser.showSaveDialog(mainStage);
-             
-            if(file != null){
-                try {
-                    WritableImage writableImage = new WritableImage((int)canvas.getWidth(), (int)canvas.getHeight());
-                    canvas.snapshot(null, writableImage);
-                    RenderedImage renderedImage = SwingFXUtils.fromFXImage(writableImage, null);
-                    ImageIO.write(renderedImage, "png", file);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                }
-            }
-		});	
 		
 		changeNotebook.setOnAction(e -> {
 			
@@ -564,7 +539,7 @@ public class FunnoteView extends Application implements Observer {
 		// Add menu items to file dropdown
 		create.getItems().addAll(createNotebook, createSection, createNewPage, addCurrPage);
 		change.getItems().addAll(changeNotebook, changeSection, changePage);
-		home.getItems().addAll(savePage, saveAsPage, clearPage);
+		home.getItems().addAll(savePage, clearPage);
 		insert.getItems().addAll(newPage, newImage);
 		mainMenuBar.getMenus().addAll(home, insert, change, create);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
