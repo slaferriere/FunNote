@@ -14,10 +14,13 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -32,16 +35,21 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -58,6 +66,8 @@ public class FunnoteView extends Application implements Observer {
 	private Canvas canvas = new Canvas(1900, 1000);
 	private GraphicsContext graphicsContext;
 	private StackPane stackPane = new StackPane();
+	private Pane pane = new Pane();
+	private TextArea textArea = new TextArea();
 	private VBox vbox = new VBox();
 	private ComboBox<Integer> fontSizesBox;
 	private ComboBox<String> fontColorBox;
@@ -70,7 +80,7 @@ public class FunnoteView extends Application implements Observer {
 	private Label penSizeLabel = new Label("Pen Size:");
 	private Label penColorLabel = new Label("Pen Color:");
 	private Label shapesLabel = new Label("Shape:");
-	private int currentFontSize = 8;
+	private int currentFontSize = 22;
 	private String currentFontColor = "Red";
 	private int currentPenSize = 5;
 	private String currentPenColor = "Red";
@@ -79,7 +89,7 @@ public class FunnoteView extends Application implements Observer {
 	private Integer penSizes[] = {5, 6, 7, 8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24};
 	private String colors[] = {"Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Pink", "Black"};
 	private String shapes[] = {"Free Draw", "Oval", "Rectangle"};
-	private Button textBoxButton = new Button("Create TextBox");
+	private Button textBoxButton = new Button("Write Text");
 	private boolean textBoxClicked;
 	private double xCoord;
 	private double yCoord;
@@ -90,6 +100,7 @@ public class FunnoteView extends Application implements Observer {
 	private Image image;
 	private ImageView imageView;
 	private String currPageFilePath;
+	private Text text;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -109,6 +120,29 @@ public class FunnoteView extends Application implements Observer {
 		
 		// Canvas setup
 		graphicsContext = canvas.getGraphicsContext2D();
+		
+		
+		pane.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				xCoord = e.getX();
+				yCoord = e.getY();
+				text = new Text();
+				text.setX(xCoord);
+				text.setY(yCoord);
+				text.setFont(Font.font(currentFontSize));
+				getTextColor();
+				pane.getChildren().add(text);
+			}
+		});
+		
+		pane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+            	text.setText(text.getText() + event.getText());
+            }
+        });
+		
 
 		
 		canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
@@ -146,10 +180,7 @@ public class FunnoteView extends Application implements Observer {
 			public void handle(MouseEvent e) {
 				double newXCoord = e.getX();
 				double newYCoord = e.getY();
-				if(textBoxClicked) {
-					drawTextBox(graphicsContext, xCoord, yCoord, newXCoord, newYCoord);
-				}
-				else if (!currentShape.equals("Free Draw")) {
+				if (!currentShape.equals("Free Draw")) {
 					drawShape(graphicsContext, xCoord, yCoord, newXCoord, newYCoord);
 				}
 				else {
@@ -162,28 +193,43 @@ public class FunnoteView extends Application implements Observer {
 		canvas.addEventHandler(MouseEvent.MOUSE_RELEASED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
-				textBoxClicked = false;
 			}
 		});
 		
 		textBoxButton.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override public void handle(ActionEvent e) {
-		        textBoxClicked = true;
+		    	if(textBoxClicked) {
+		    		textBoxButton.setEffect(null);
+		    		textBoxClicked = false;
+		    	} else {
+			    	textBoxButton.setEffect(new DropShadow());
+			        textBoxClicked = true;
+			        pane.requestFocus();
+		    	}
+		    	changeTop();
 		    }
 		});
 		
+
+		
 		stackPane.setStyle("-fx-background-color: white");
+		//stackPane.getChildren().add(textArea);
+		
+		stackPane.getChildren().add(pane);
 		stackPane.getChildren().add(canvas);
+
+
 		
 		// Left vbox setup
 //		vbox.setPadding(new Insets(5, 5, 5, 5));	
 //		window.setLeft(vbox);
 //		window.setPadding(new Insets(5, 5, 5, 5));
 		
-		window.setCenter(canvas);
+		window.setCenter(stackPane);
 	
 		// Create the primary scene
 		Scene scene = new Scene(window, 1500, 1000); 
+		
 		// Give stage a title
 	    primaryStage.setTitle("FunNote"); 
 	    // Add scene to stage
@@ -236,14 +282,39 @@ public class FunnoteView extends Application implements Observer {
 	//	gc.fill();
 	}
 	
-
-	// Working on this. Instead of drawing a textbox, the best approach would be to use gc.strokeText(). Just
-	// not 100% sure how to implement that.
-	
-	private void drawTextBox(GraphicsContext gc, double startX, double startY, double endX, double endY) {
-		TextArea textArea = new TextArea();
-		textArea.setPrefSize(Math.abs(startX - endX), Math.abs(startY - endY));
+	private void getTextColor() {
+		if(currentFontColor.equals("Red")) {
+			text.setFill(Color.RED);
+		} else if(currentFontColor.equals("Orange")) {
+			text.setFill(Color.ORANGE);
+		} else if(currentFontColor.equals("Yellow")) {
+			text.setFill(Color.YELLOW);
+		} else if(currentFontColor.equals("Green")) {
+			text.setFill(Color.GREEN);
+		} else if(currentFontColor.equals("Blue")) {
+			text.setFill(Color.BLUE);
+		} else if(currentFontColor.equals("Purple")) {
+			text.setFill(Color.PURPLE);
+		} else if(currentFontColor.equals("Pink")) {
+			text.setFill(Color.PINK);
+		} else if(currentFontColor.equals("Black")) {
+			text.setFill(Color.BLACK);
+		}
+		
 	}
+	
+	
+	// Swaps the canvas with the pane and vice versa. Is called when "Write Text" button is clicked
+	private void changeTop() {
+        ObservableList<Node> childs = this.stackPane.getChildren();
+ 
+        if (childs.size() > 1) {
+            Node topNode = childs.get(childs.size()-1);
+            topNode.toBack();
+        }
+    }
+	
+
 	
 	
 	// This method draws the specified shape. It clears the previous shape so the user can drag and drop. Only issue is when
