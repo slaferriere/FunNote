@@ -21,7 +21,7 @@ public class FunnoteController {
 		model.createSection(sectionName);
 	}
 	
-	public void addNewPage(String pageName) {
+	public void addNewPage(String pageName) throws IOException {
 		model.createPage(pageName);
 	}
 	
@@ -35,6 +35,10 @@ public class FunnoteController {
 	
 	public boolean hasSection() {
 		return model.hasSection();
+	}
+	
+	public boolean hasPage() {
+		return model.hasPage();
 	}
 	
 	/**
@@ -56,8 +60,8 @@ public class FunnoteController {
 	/**
 	 * This method tells the model to save the current notebook
 	 */
-	public void save(String canvasURL) {
-		model.save(canvasURL);
+	public void save(RenderedImage image) throws IOException {
+		model.save(image);
 	}
 	
 	public FunnoteModel getModel() {

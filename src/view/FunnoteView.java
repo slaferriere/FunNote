@@ -401,7 +401,36 @@ public class FunnoteView extends Application implements Observer {
 		});	
 		
 		savePage.setOnAction(e -> {
-			
+			if(!controller.hasNotebook()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("MISSING NOTEBOOK:");
+				alert.setContentText("Create a Notebook First");
+				alert.showAndWait();
+			} else if(!controller.hasSection()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("MISSING SECTION:");
+				alert.setContentText("Create a Section First");
+				alert.showAndWait();
+			} else if(!controller.hasPage()) {
+				Alert alert = new Alert(AlertType.ERROR);
+				alert.setTitle("ERROR");
+				alert.setHeaderText("MISSING SECTION:");
+				alert.setContentText("Create a Section First");
+				alert.showAndWait();
+			} else {
+				WritableImage image = new WritableImage(
+						(int) canvas.getWidth(), (int) canvas.getHeight());
+				canvas.snapshot(null, image);
+				RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
+				try {
+					controller.save(renderedImage);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
 		});
 		
 		saveAsPage.setOnAction(e -> {
@@ -493,7 +522,12 @@ public class FunnoteView extends Application implements Observer {
 				String pageName = page.getEditor().getText();
 				if(pageName.compareTo("Enter Any Text Here") == 0) {}
 				else {
-					controller.addNewPage(pageName);
+					try {
+						controller.addNewPage(pageName);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 			

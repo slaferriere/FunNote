@@ -47,8 +47,13 @@ public class FunnoteModel extends Observable {
 		currNotebook.addSection(sectionName);
 	}
 	
-	public void createPage(String page) {
-		currNotebook.currSection.addPage(page);
+	public void createPage(String page) throws IOException {
+		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
+		if(!photoLib.isDirectory()) throw new IOException();
+		File imageWritten = new File(photoLib.getAbsolutePath() + File.separator + "page_" +
+							Integer.toString(currNotebook.getNumPages()));
+		imageWritten.createNewFile();
+		currNotebook.currSection.addPage(page, imageWritten.getAbsolutePath());
 	}
 	
 	public void addCurrentPage(String page, RenderedImage image) throws IOException {
@@ -77,6 +82,13 @@ public class FunnoteModel extends Observable {
 		return currNotebook != null;
 	}
 	
+	public boolean hasPage() {
+		if(currNotebook == null) return false;
+		else if(currNotebook.currSection == null) return false;
+		else if(currNotebook.currSection.currPage == null) return false;
+		return true;
+	}
+	
 	/**
 	 * 
 	 * @param notebook
@@ -99,7 +111,9 @@ public class FunnoteModel extends Observable {
 	 * 
 	 * @param canvas
 	 */
-	public void save(String canvasURL) {
-		currNotebook.currSection.currPage.updateCanvasURL(canvasURL);
+	public void save(RenderedImage image) throws IOException {
+		File imageToWrite = new File(currNotebook.currSection.currPage.canvasURL);
+		boolean written = ImageIO.write(image, "png", imageToWrite);
+		if(!written) throw new IOException();
 	}
 }
