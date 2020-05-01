@@ -454,6 +454,38 @@ public class FunnoteView extends Application implements Observer {
 		});
 		
 		changeNotebook.setOnAction(e -> {
+			DirectoryChooser dirChoose = new DirectoryChooser();
+			File dir = dirChoose.showDialog(mainStage);
+			
+			if(dir == null) { 
+				showInvalidNotebookFileAlert(); 
+			}
+			else if(!dir.isDirectory()) { 
+				showInvalidNotebookFileAlert(); 
+			}
+			else {
+				String[] ls = dir.list();
+				if(ls.length != 2) { 
+					showInvalidNotebookFileAlert(); 
+					System.out.println("here");
+				}
+				else {
+					if(ls[0].compareTo("notebook.funnote") == 0 &&
+							ls[1].compareTo("pageImages") == 0) {
+						File imageFile = new File(dir.getAbsolutePath() + File.separator +
+								ls[1]);
+						if(imageFile.exists()) {
+							if(imageFile.isDirectory()) {
+								controller.changeNotebook(dir);
+							} else {
+								showInvalidNotebookFileAlert();
+							}
+						} else { 
+							showInvalidNotebookFileAlert();
+						}
+					}
+				}
+			}
 			
 		});
 		
@@ -584,6 +616,16 @@ public class FunnoteView extends Application implements Observer {
 		insert.getItems().addAll(newPage, newImage);
 		mainMenuBar.getMenus().addAll(home, insert, change, create);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
+	}
+	
+	private void showInvalidNotebookFileAlert() {
+		Alert alert = new Alert(AlertType.ERROR);
+		alert.setTitle("ERROR");
+		alert.setHeaderText("Invalid Notebook File");
+		alert.setContentText("Directory is not of specified format. Please "
+				+ "look at help page to find the corret file format, or create"
+				+ "a new notebook");
+		alert.showAndWait();
 	}
 	
 	/**

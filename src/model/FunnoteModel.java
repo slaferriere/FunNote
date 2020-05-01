@@ -2,8 +2,11 @@ package model;
 
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -12,6 +15,8 @@ import java.util.Observable;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
+
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.EOFException;
 
 public class FunnoteModel extends Observable {
 	
@@ -37,7 +42,7 @@ public class FunnoteModel extends Observable {
 			if(!photoLib.mkdir()) {
 				throw new IOException();
 			}
-			File notebookF = new File(path + File.separator + name + ".funnote");
+			File notebookF = new File(path + File.separator + "notebook.funnote");
 			if(!notebookF.createNewFile()) {
 				throw new IOException();
 			}
@@ -142,10 +147,31 @@ public class FunnoteModel extends Observable {
 	
 	/**
 	 * 
-	 * @param notebook
+	 * @param dir
 	 */
-	public void changeNotebook(String notebook) {
-		// TODO: load notebook
+	public void changeNotebook(File dir) {
+		try {
+			FileInputStream input = new FileInputStream(dir.getAbsolutePath() + File.separator +
+					"notebook.funnote");
+			ObjectInputStream objectIn = new ObjectInputStream(input);
+			currNotebook = (Notebook) objectIn.readObject();
+			objectIn.close();
+			this.setChanged();
+			if(this.hasPage()) {
+				this.notifyObservers(currNotebook.currSection.currPage);
+			} else {
+				this.notifyObservers("blank page");
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (EOFException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public Notebook getNotebook() {
@@ -165,7 +191,7 @@ public class FunnoteModel extends Observable {
 		if(!written) throw new IOException();
 		
 		try {
-			FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + currNotebook.fName);
+			FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
 			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
 			objectOut.writeObject(currNotebook);
 			objectOut.close();

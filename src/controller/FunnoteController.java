@@ -67,8 +67,8 @@ public class FunnoteController {
 	 * currently. This will affect what file is being saved
 	 * @param notebook Which notebook to navigate to
 	 */
-	public void changeNotebook(String notebook) {
-		model.changeNotebook(notebook);
+	public void changeNotebook(File dir) {
+		model.changeNotebook(dir);
 	}
 	/**
 	 * This method tells the model to save the current notebook
