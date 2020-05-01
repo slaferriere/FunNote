@@ -57,6 +57,11 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers("blank page");
 	}
 	
+	/**
+	 * 
+	 * @param page
+	 * @throws IOException
+	 */
 	public void createPage(String page) throws IOException {
 		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
 		if(!photoLib.isDirectory()) throw new IOException();
