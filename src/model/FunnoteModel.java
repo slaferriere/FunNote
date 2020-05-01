@@ -47,6 +47,14 @@ public class FunnoteModel extends Observable {
 				throw new IOException();
 			}
 			currNotebook = new Notebook(newNotebook, name + ".funnote");
+			try {
+				FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
+				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+				objectOut.writeObject(currNotebook);
+				objectOut.close();
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
 		} else {
 			throw new IOException();
 		}
@@ -158,7 +166,7 @@ public class FunnoteModel extends Observable {
 	 * 
 	 * @param dir
 	 */
-	public void changeNotebook(File dir) {
+	public void changeNotebook(File dir){
 		try {
 			FileInputStream input = new FileInputStream(dir.getAbsolutePath() + File.separator +
 					"notebook.funnote");
@@ -177,8 +185,6 @@ public class FunnoteModel extends Observable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (EOFException e) {
 			e.printStackTrace();
 		}
 	}
