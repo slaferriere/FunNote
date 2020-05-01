@@ -49,6 +49,8 @@ public class FunnoteModel extends Observable {
 	
 	public void createSection(String sectionName) {
 		currNotebook.addSection(sectionName);
+		this.setChanged();
+		this.notifyObservers("blank page");
 	}
 	
 	public void createPage(String page) throws IOException {
@@ -131,7 +133,11 @@ public class FunnoteModel extends Observable {
 	public void changeSection(String section) {
 		currNotebook.changeSection(section);
 		this.setChanged();
-		this.notifyObservers(currNotebook.currSection.currPage);
+		if(currNotebook.currSection.currPage == null) {
+			this.notifyObservers("blank page");
+		} else {
+			this.notifyObservers(currNotebook.currSection.currPage);
+		}
 	}
 	
 	/**

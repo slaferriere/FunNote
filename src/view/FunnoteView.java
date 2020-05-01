@@ -265,7 +265,6 @@ public class FunnoteView extends Application implements Observer {
 			}
 			Page page = (Page) obj;
 			String imageURL = controller.getPageURL(page.getCanvasURL());
-			System.out.println(imageURL);
 			try {
 				Image canvasImage = new Image(new FileInputStream(imageURL));
 				graphicsContext.drawImage(canvasImage, 0, 0);
