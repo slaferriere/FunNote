@@ -56,6 +56,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.FunnoteModel;
+import model.Page;
 
 /**
  * This is the main class that displays everything on the screen. It will update the controller
@@ -251,7 +252,28 @@ public class FunnoteView extends Application implements Observer {
 	 * Required update method for the observer/observable design pattern
 	 */
 	public void update(Observable obs, Object obj) {
-		// Observable pattern
+		if(obj instanceof String) {
+			String input = (String) obj;
+			if(input.compareTo("blank page") == 0)
+				graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+		}
+		else {
+			graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			if(!(obj instanceof Page)) {
+				System.out.println("Problem with Page");
+				System.exit(1);
+			}
+			Page page = (Page) obj;
+			String imageURL = controller.getPageURL(page.getCanvasURL());
+			System.out.println(imageURL);
+			try {
+				Image canvasImage = new Image(new FileInputStream(imageURL));
+				graphicsContext.drawImage(canvasImage, 0, 0);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
 	}
 	
 	private void draw(GraphicsContext gc) {
@@ -437,11 +459,31 @@ public class FunnoteView extends Application implements Observer {
 		});
 		
 		changeSection.setOnAction(e-> {
+			FunnoteFileLoader getSection = new FunnoteFileLoader("section", controller);
+			Scene loadScene = new Scene(getSection.getGP());
+			getSection.setScene(loadScene);
+			getSection.initModality(Modality.APPLICATION_MODAL);
 			
+			getSection.showAndWait();
+			if(!getSection.getChosen()) {
+				
+			} else {
+				controller.changeSection(getSection.partChosen);
+			}
 		});
 		
 		changePage.setOnAction(e -> {
+			FunnoteFileLoader getPage = new FunnoteFileLoader("page", controller);
+			Scene loadScene = new Scene(getPage.getGP());
+			getPage.setScene(loadScene);
+			getPage.initModality(Modality.APPLICATION_MODAL);
 			
+			getPage.showAndWait();
+			if(!getPage.getChosen()) {
+				
+			} else {
+				controller.changePage(getPage.partChosen);
+			}
 		});
 		
 		createNotebook.setOnAction(e -> {

@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.awt.image.RenderedImage;
 
 import model.FunnoteModel;
@@ -41,12 +42,24 @@ public class FunnoteController {
 		return model.hasPage();
 	}
 	
+	public List<String> getPageList() {
+		return model.getPageList();
+	}
+	
+	public List<String> getSectionList() {
+		return model.getSectionList();
+	}
+	
 	/**
 	 * This method will change the page to the string passed to it
 	 * @param page String of which page is requested
 	 */
-	public void changePage(String notebook, String section, String page) {
-		model.changePage(notebook, section, page);
+	public void changePage(String page) {
+		model.changePage(page);
+	}
+	
+	public void changeSection(String section) {
+		model.changeSection(section);
 	}
 	
 	/**
@@ -62,6 +75,16 @@ public class FunnoteController {
 	 */
 	public void save(RenderedImage image) throws IOException {
 		model.save(image);
+	}
+	
+	/**
+	 * Given an image number (should be the page.canvasURL), this method
+	 * will return the url of the canvas image
+	 * @param imageNum
+	 * @return
+	 */
+	public String getPageURL(String imageNum) {
+		return model.getPageImageURL(imageNum);
 	}
 	
 	public FunnoteModel getModel() {

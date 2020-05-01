@@ -14,14 +14,20 @@ public class Notebook implements Serializable {
 	protected Section currSection;
 	protected String location;
 	private int numPages = 0;
+	protected String fName;
 	
-	public Notebook(File location) {
+	public Notebook(File location, String fName) {
 		this.sections = new HashMap<String, Section>();
 		this.location = location.getAbsolutePath();
+		this.fName = fName;
 	}
 	
 	public int getNumPages() {
 		return numPages++;
+	}
+	
+	public String getURL() {
+		return fName;
 	}
 	
 	public Page changePage(String section, String page) {
@@ -38,7 +44,7 @@ public class Notebook implements Serializable {
 		this.sections.get(section).addPage(page, canvasURL);
 	}
 	
-	public Section getSection(String section) {
+	public Section changeSection(String section) {
 		this.currSection = this.sections.get(section);
 		return this.currSection;
 	}

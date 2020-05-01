@@ -1,11 +1,15 @@
 package model;
 
-import java.util.Map;
 import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.HashMap;
+import java.io.ObjectOutputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Observable;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -37,7 +41,7 @@ public class FunnoteModel extends Observable {
 			if(!notebookF.createNewFile()) {
 				throw new IOException();
 			}
-			currNotebook = new Notebook(newNotebook);
+			currNotebook = new Notebook(newNotebook, name + ".funnote");
 		} else {
 			throw new IOException();
 		}
@@ -50,10 +54,14 @@ public class FunnoteModel extends Observable {
 	public void createPage(String page) throws IOException {
 		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
 		if(!photoLib.isDirectory()) throw new IOException();
+		String numPage = Integer.toString(currNotebook.getNumPages());
 		File imageWritten = new File(photoLib.getAbsolutePath() + File.separator + "page_" +
-							Integer.toString(currNotebook.getNumPages()));
+							numPage + ".png");
 		imageWritten.createNewFile();
-		currNotebook.currSection.addPage(page, imageWritten.getAbsolutePath());
+		currNotebook.currSection.addPage(page, "page_" + numPage + ".png");
+		
+		this.setChanged();
+		this.notifyObservers("blank page");
 	}
 	
 	public void addCurrentPage(String page, RenderedImage image) throws IOException {
@@ -61,11 +69,11 @@ public class FunnoteModel extends Observable {
 		if(!photoLib.isDirectory()) {
 			throw new IOException();
 		}
+		String numPage = Integer.toString(currNotebook.getNumPages());
 		File imageWritten = new File(photoLib.getAbsolutePath() + File.separator + "page_" +
-							Integer.toString(currNotebook.getNumPages()));
+							numPage + ".png");
 		ImageIO.write(image, "png", imageWritten);
-		currNotebook.currSection.addPage(page, imageWritten.getAbsolutePath());
-		
+		currNotebook.currSection.addPage(page, "page_" + numPage + ".png");
 	}
 	
 	public boolean hasSection() {
@@ -78,7 +86,6 @@ public class FunnoteModel extends Observable {
 	}
 	
 	public boolean hasNotebook() {
-		System.out.println("here");
 		return currNotebook != null;
 	}
 	
@@ -89,14 +96,42 @@ public class FunnoteModel extends Observable {
 		return true;
 	}
 	
+	public List<String> getSectionList() {
+		List<String> sectionList = new LinkedList<String>();
+		Set<String> keySet = currNotebook.sections.keySet();
+		Iterator<String> iter = keySet.iterator();
+		while(iter.hasNext()) {
+			sectionList.add(iter.next());
+		}
+		return sectionList;
+	}
+	
+	public List<String> getPageList() {
+		List<String> pageList = new LinkedList<String>();
+		Set<String> keySet = currNotebook.currSection.pages.keySet();
+		Iterator<String> iter = keySet.iterator();
+		while(iter.hasNext()) {
+			pageList.add(iter.next());
+		}
+		return pageList;
+	}
+	
 	/**
 	 * 
 	 * @param notebook
 	 * @param section
 	 * @param page
 	 */
-	public void changePage(String notebook, String section, String page) {
-		// TODO: load page
+	public void changePage(String page) {
+		currNotebook.currSection.changePage(page);
+		this.setChanged();
+		this.notifyObservers(currNotebook.currSection.currPage);
+	}
+	
+	public void changeSection(String section) {
+		currNotebook.changeSection(section);
+		this.setChanged();
+		this.notifyObservers(currNotebook.currSection.currPage);
 	}
 	
 	/**
@@ -107,13 +142,35 @@ public class FunnoteModel extends Observable {
 		// TODO: load notebook
 	}
 	
+	public Notebook getNotebook() {
+		return currNotebook;
+	}
+	
 	/**
 	 * 
 	 * @param canvas
 	 */
 	public void save(RenderedImage image) throws IOException {
-		File imageToWrite = new File(currNotebook.currSection.currPage.canvasURL);
+		String pathToDir = currNotebook.location;
+		String pathToImage = pathToDir + File.separator + "pageImages" + 
+			File.separator + currNotebook.currSection.currPage.canvasURL;
+		File imageToWrite = new File(pathToImage);
 		boolean written = ImageIO.write(image, "png", imageToWrite);
 		if(!written) throw new IOException();
+		
+		try {
+			FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + currNotebook.fName);
+			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+			objectOut.writeObject(currNotebook);
+			objectOut.close();
+		} catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
+	
+	public String getPageImageURL(String imageNum) {
+		return currNotebook.location + File.separator + "pageImages"
+				+ File.separator + imageNum;
+	}
+	
 }
