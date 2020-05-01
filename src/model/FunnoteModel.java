@@ -47,6 +47,10 @@ public class FunnoteModel extends Observable {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param sectionName
+	 */
 	public void createSection(String sectionName) {
 		currNotebook.addSection(sectionName);
 		this.setChanged();
