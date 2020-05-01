@@ -183,6 +183,10 @@ public class FunnoteModel extends Observable {
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Notebook getNotebook() {
 		return currNotebook;
 	}
