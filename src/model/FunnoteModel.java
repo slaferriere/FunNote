@@ -27,7 +27,7 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
+	 * This method
 	 * @return
 	 */
 	public String getCurrGC() {
