@@ -345,6 +345,9 @@ public class FunnoteView extends Application implements Observer {
 		gc.setLineWidth(currentPenSize);
 	}
 	
+	/**
+	 * 
+	 */
 	private void getTextColor() {
 		if(currentFontColor.equals("Red")) {
 			text.setFill(Color.RED);
