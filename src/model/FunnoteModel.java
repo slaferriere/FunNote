@@ -21,6 +21,7 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.EOFExc
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
+	public int sectionCount;
 		
 	public FunnoteModel() {
 		
@@ -46,7 +47,8 @@ public class FunnoteModel extends Observable {
 			if(!notebookF.createNewFile()) {
 				throw new IOException();
 			}
-			currNotebook = new Notebook(newNotebook, name + ".funnote");
+			currNotebook = new Notebook(newNotebook, name + ".funnote", name);
+			System.out.println("HERE");
 			try {
 				FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
 				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);

@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -22,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -31,11 +35,14 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -44,13 +51,20 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -58,6 +72,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.FunnoteModel;
 import model.Page;
+import model.Section;
 
 /**
  * This is the main class that displays everything on the screen. It will update the controller
@@ -73,14 +88,13 @@ public class FunnoteView extends Application implements Observer {
 	private GraphicsContext graphicsContext;
 	private StackPane stackPane = new StackPane();
 	private Pane pane = new Pane();
-	private TextArea textArea = new TextArea();
-	private VBox vbox = new VBox();
 	private ComboBox<Integer> fontSizesBox;
 	private ComboBox<String> fontColorBox;
 	private ComboBox<Integer> penSizesBox;
 	private ComboBox<String> penColorBox;
 	private ComboBox<String> shapesBox;
-	private ToolBar toolBar;
+	private ToolBar textToolBar;
+	private ToolBar drawToolBar;
 	private Label fontSizeLabel = new Label("Font Size:");
 	private Label fontColorLabel = new Label("Font Color:");
 	private Label penSizeLabel = new Label("Pen Size:");
@@ -104,10 +118,15 @@ public class FunnoteView extends Application implements Observer {
 	private String imageUrl;
 	private boolean insertImage;
 	private Image image;
-	private ImageView imageView;
-	private String currPageFilePath;
 	private Text text;
 	private FunnoteController controller = new FunnoteController(new FunnoteModel());
+	private Label currMode = new Label("Current Mode: DRAW");
+	private Label currNotebook = new Label("");
+	private HBox hbox = new HBox();
+	private BorderPane window = new BorderPane();
+	private int count = 0;
+	private String currSection = "";
+	private String currPage = "";
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -117,18 +136,24 @@ public class FunnoteView extends Application implements Observer {
 	public void start(Stage primaryStage) throws Exception {
 		controller.getModel().addObserver(this);
 		mainStage = primaryStage;
-		BorderPane window = new BorderPane();
 		
 		createMenuBar();
+		createTextToolBar();
+		createDrawToolBar();
+
+		currNotebook.setText("Welcome to FunNote!");
+		currNotebook.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+		currNotebook.setTextFill(Color.WHITE);
 		
-		createToolBar();
+		hbox.setAlignment(Pos.CENTER);
+		hbox.setPadding(new Insets(5, 5, 5, 5));
+		hbox.setStyle("-fx-background-color: #800080");
+		hbox.getChildren().add(currNotebook);
 		
-		window.setTop(new VBox(mainMenuBar, toolBar));
-		
-		
+		window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
+			
 		// Canvas setup
 		graphicsContext = canvas.getGraphicsContext2D();
-		
 		
 		pane.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
@@ -150,8 +175,6 @@ public class FunnoteView extends Application implements Observer {
             	text.setText(text.getText() + event.getText());
             }
         });
-		
-
 		
 		canvas.addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
 			@Override
@@ -207,18 +230,20 @@ public class FunnoteView extends Application implements Observer {
 		textBoxButton.setOnAction(new EventHandler<ActionEvent>() {
 		    @Override public void handle(ActionEvent e) {
 		    	if(textBoxClicked) {
-		    		textBoxButton.setEffect(null);
 		    		textBoxClicked = false;
+		    		textBoxButton.setText("Click to Write Text");
+		    		window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
+		    		currMode.setText("Current Mode: Draw");
 		    	} else {
-			    	textBoxButton.setEffect(new DropShadow());
 			        textBoxClicked = true;
+		    		textBoxButton.setText("Click to Draw");
 			        pane.requestFocus();
+			        window.setTop(new VBox(mainMenuBar, hbox, textToolBar));
+		    		currMode.setText("Current Mode: Text");
 		    	}
 		    	changeTop();
 		    }
 		});
-		
-
 		
 		stackPane.setStyle("-fx-background-color: white");
 		//stackPane.getChildren().add(textArea);
@@ -226,12 +251,7 @@ public class FunnoteView extends Application implements Observer {
 		stackPane.getChildren().add(pane);
 		stackPane.getChildren().add(canvas);
 
-
-		
-		// Left vbox setup
-//		vbox.setPadding(new Insets(5, 5, 5, 5));	
-//		window.setLeft(vbox);
-//		window.setPadding(new Insets(5, 5, 5, 5));
+		createVbox();
 		
 		window.setCenter(stackPane);
 	
@@ -277,8 +297,7 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	private void draw(GraphicsContext gc) {
-
-		
+	
 		// Font color 
 		if (currentPenColor.equals("Red")) {
 			gc.setFill(Color.RED);
@@ -307,7 +326,6 @@ public class FunnoteView extends Application implements Observer {
 		}
 		
 		gc.setLineWidth(currentPenSize);
-	//	gc.fill();
 	}
 	
 	private void getTextColor() {
@@ -370,21 +388,167 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	/**
+	 * This method generates the vbox on the left side of the screen that contains 
+	 * information regarding the current notebook, sections, and pages. From this 
+	 * vbox the user can change the notebook, section, and page.
+	 */
+	private void createVbox() {
+		TitledPane notebookTp = new TitledPane();
+		HBox sectionHbox = new HBox();
+		HBox pageHbox = new HBox();
+		VBox vbox = new VBox();
+		Button notebookButton = new Button("Switch Notebook");
+		Button sectionButton = new Button("Switch Section");
+		Button pageButton = new Button("Switch Page");
+		
+		notebookTp.setText("Notebooks");
+		notebookTp.setContent(notebookButton);
+		notebookButton.setOnAction(e -> {
+			DirectoryChooser dirChoose = new DirectoryChooser();
+			File dir = dirChoose.showDialog(mainStage);
+			
+			if(dir == null) { 
+				showInvalidNotebookFileAlert(); 
+			}
+			else if(!dir.isDirectory()) { 
+				showInvalidNotebookFileAlert(); 
+			}
+			else {
+				String[] ls = dir.list();
+				if(ls.length != 2) { 
+					showInvalidNotebookFileAlert(); 
+					System.out.println("here");
+				}
+				else {
+					if(ls[0].compareTo("notebook.funnote") == 0 &&
+							ls[1].compareTo("pageImages") == 0) {
+						File imageFile = new File(dir.getAbsolutePath() + File.separator +
+								ls[1]);
+						if(imageFile.exists()) {
+							if(imageFile.isDirectory()) {
+								controller.changeNotebook(dir);
+							} else {
+								showInvalidNotebookFileAlert();
+							}
+						} else { 
+							showInvalidNotebookFileAlert();
+						}
+					}
+				}
+			}
+			
+			if (controller.getModel().getNotebook().getNotebookName() == null) {
+				currNotebook.setText("Welcome to FunNote!");
+			} else {
+				currNotebook.setText(controller.getModel().getNotebook().getNotebookName() + " Notebook");
+			}
+			currNotebook.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+			if (textBoxClicked) {
+				window.setTop(new VBox(mainMenuBar, hbox, textToolBar));
+			} else {
+				window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
+			}		
+			
+			createVbox();
+		});
+		notebookTp.setExpanded(false);
+		
+		// Section list
+		TitledPane sectionTp = new TitledPane();
+		sectionTp.setText("Sections");
+		if (controller.getModel().hasSection()) {
+			VBox sectionVbox = new VBox();
+			List<String> sections = controller.getSectionList();
+			for (int j = 0; j < sections.size(); j++) {
+				if (sections.get(j).equals(currSection)) {
+					Label label = new Label(sections.get(j));
+					label.setStyle("-fx-font-weight: bold");
+					sectionVbox.getChildren().add(label);
+				} else {
+					sectionVbox.getChildren().add(new Label(sections.get(j)));
+				}
+			}
+			sectionTp.setContent(sectionVbox);
+		} else {
+			sectionTp.setContent(new Label("There are no sections in this notebook."));
+		}
+		sectionButton.setOnAction(e -> {
+			FunnoteFileLoader getSection = new FunnoteFileLoader("section", controller);
+			Scene loadScene = new Scene(getSection.getGP());
+			getSection.setScene(loadScene);
+			getSection.initModality(Modality.APPLICATION_MODAL);
+			getSection.showAndWait();
+			if(!getSection.getChosen()) {
+				
+			} else {
+				currSection = getSection.partChosen;
+				controller.changeSection(getSection.partChosen);
+			}
+			createVbox();
+		});
+		sectionTp.setExpanded(false);
+		
+		// Page list
+		TitledPane pageTp = new TitledPane();
+		pageTp.setText("Pages");
+		if (controller.getModel().hasSection()) {
+			VBox pageVbox = new VBox();
+			List<String> pages = controller.getPageList();
+			for (int j = 0; j < pages.size(); j++) {
+				if (pages.get(j).equals(currPage)) {
+					Label label = new Label(pages.get(j));
+					label.setStyle("-fx-font-weight: bold");
+					pageVbox.getChildren().add(label);
+				} else {
+					pageVbox.getChildren().add(new Label(pages.get(j)));
+				}
+			}
+			pageTp.setContent(pageVbox);
+		} else {
+			pageTp.setContent(new Label("There are no pages in this section."));
+		}
+		pageButton.setOnAction(e -> {
+			FunnoteFileLoader getPage = new FunnoteFileLoader("page", controller);
+			Scene loadScene = new Scene(getPage.getGP());
+			getPage.setScene(loadScene);
+			getPage.initModality(Modality.APPLICATION_MODAL);
+			
+			getPage.showAndWait();
+			if(!getPage.getChosen()) {
+				
+			} else {
+				currPage = getPage.partChosen;
+				controller.changePage(getPage.partChosen);
+			}
+			createVbox();
+		});
+		pageTp.setExpanded(false);
+
+		sectionHbox.setSpacing(5);
+		sectionHbox.setAlignment(Pos.CENTER);
+		pageHbox.setSpacing(5);
+		pageHbox.setAlignment(Pos.CENTER);
+		sectionHbox.getChildren().addAll(sectionTp, sectionButton);
+		pageHbox.getChildren().addAll(pageTp, pageButton);
+		vbox.setPadding(new Insets(10, 10, 10, 10));
+		vbox.setSpacing(10);
+		vbox.setAlignment(Pos.TOP_CENTER);
+		vbox.getChildren().addAll(currMode, textBoxButton, notebookTp, sectionHbox, pageHbox);  
+		count++;
+		window.setLeft(vbox);
+	}
+	
+	
+	/**
 	 * This method creates the menu bar for the main stage/scene.
 	 */
 	private void createMenuBar() {
 		// File Menu
 		Menu home = new Menu("Home");
 		Menu insert = new Menu("Insert");
-		Menu change = new Menu("Switch");
 		Menu create = new Menu("Create");
 		
 		// Create menu items
-		MenuItem changeNotebook = new MenuItem("Notebook");
-		MenuItem changeSection = new MenuItem("Section");
-		MenuItem changePage = new MenuItem("Page");
-		
-		MenuItem newPage = new MenuItem("New");
 		MenuItem newImage = new MenuItem("Image");
 		
 		MenuItem clearPage = new MenuItem("Clear");
@@ -394,11 +558,6 @@ public class FunnoteView extends Application implements Observer {
 		MenuItem createSection = new MenuItem("New Section");
 		MenuItem createNewPage = new MenuItem("New Page");
 		MenuItem addCurrPage = new MenuItem("Add Current Page");
-		
-		// When user selects to create a new page
-		newPage.setOnAction(e -> {
-			
-		});
 		
 		// When user selects to insert a new image
 		newImage.setOnAction(e -> {
@@ -454,70 +613,6 @@ public class FunnoteView extends Application implements Observer {
 			}
 		});
 		
-		changeNotebook.setOnAction(e -> {
-			DirectoryChooser dirChoose = new DirectoryChooser();
-			File dir = dirChoose.showDialog(mainStage);
-			
-			if(dir == null) { 
-				showInvalidNotebookFileAlert(); 
-			}
-			else if(!dir.isDirectory()) { 
-				showInvalidNotebookFileAlert(); 
-			}
-			else {
-				String[] ls = dir.list();
-				if(ls.length != 2) { 
-					showInvalidNotebookFileAlert(); 
-					System.out.println("here");
-				}
-				else {
-					if(ls[0].compareTo("notebook.funnote") == 0 &&
-							ls[1].compareTo("pageImages") == 0) {
-						File imageFile = new File(dir.getAbsolutePath() + File.separator +
-								ls[1]);
-						if(imageFile.exists()) {
-							if(imageFile.isDirectory()) {
-								controller.changeNotebook(dir);
-							} else {
-								showInvalidNotebookFileAlert();
-							}
-						} else { 
-							showInvalidNotebookFileAlert();
-						}
-					}
-				}
-			}
-			
-		});
-		
-		changeSection.setOnAction(e-> {
-			FunnoteFileLoader getSection = new FunnoteFileLoader("section", controller);
-			Scene loadScene = new Scene(getSection.getGP());
-			getSection.setScene(loadScene);
-			getSection.initModality(Modality.APPLICATION_MODAL);
-			
-			getSection.showAndWait();
-			if(!getSection.getChosen()) {
-				
-			} else {
-				controller.changeSection(getSection.partChosen);
-			}
-		});
-		
-		changePage.setOnAction(e -> {
-			FunnoteFileLoader getPage = new FunnoteFileLoader("page", controller);
-			Scene loadScene = new Scene(getPage.getGP());
-			getPage.setScene(loadScene);
-			getPage.initModality(Modality.APPLICATION_MODAL);
-			
-			getPage.showAndWait();
-			if(!getPage.getChosen()) {
-				
-			} else {
-				controller.changePage(getPage.partChosen);
-			}
-		});
-		
 		createNotebook.setOnAction(e -> {
 			TextInputDialog notebook = new TextInputDialog("Enter Any Text Here");
 			notebook.setHeaderText("Enter Name of Notebook Here");
@@ -536,6 +631,16 @@ public class FunnoteView extends Application implements Observer {
 					}
 				}
 			}
+			
+			currNotebook.setText(controller.getModel().getNotebook().getNotebookName() + " Notebook");
+			currNotebook.setFont(Font.font("Arial", FontWeight.BOLD, 25));
+			if (textBoxClicked) {
+				window.setTop(new VBox(mainMenuBar, hbox, textToolBar));
+			} else {
+				window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
+			}
+			
+			createVbox();
 		});
 		
 		createSection.setOnAction(e -> {
@@ -555,6 +660,8 @@ public class FunnoteView extends Application implements Observer {
 					controller.addNewSection(sectionName);
 				}
 			}
+			
+			createVbox();
 		});
 		
 		createNewPage.setOnAction(e -> {
@@ -580,6 +687,7 @@ public class FunnoteView extends Application implements Observer {
 				}
 			}
 			
+			createVbox();
 		});
 		
 		addCurrPage.setOnAction(e -> {
@@ -608,14 +716,15 @@ public class FunnoteView extends Application implements Observer {
 					}
 				}
 			}
+			
+			createVbox();
 		});
 		
 		// Add menu items to file dropdown
 		create.getItems().addAll(createNotebook, createSection, createNewPage, addCurrPage);
-		change.getItems().addAll(changeNotebook, changeSection, changePage);
 		home.getItems().addAll(savePage, clearPage);
-		insert.getItems().addAll(newPage, newImage);
-		mainMenuBar.getMenus().addAll(home, insert, change, create);
+		insert.getItems().addAll(newImage);
+		mainMenuBar.getMenus().addAll(home, insert, create);
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
 	
@@ -635,8 +744,11 @@ public class FunnoteView extends Application implements Observer {
 	 * method also handles all of the change listeners associated with each of 
 	 * the options.
 	 */
-	private void createToolBar() {
-		toolBar = new ToolBar();
+	private void createTextToolBar() {
+		textToolBar = new ToolBar();
+		
+		fontSizeLabel.setTextFill(Color.WHITE);
+		fontColorLabel.setTextFill(Color.WHITE);
 		
 		// Font size selector
 		fontSizesBox = new ComboBox<Integer>(FXCollections.observableArrayList(fontSizes));
@@ -658,6 +770,22 @@ public class FunnoteView extends Application implements Observer {
 				currentFontColor = newValue;
 			}
 		});
+		
+		textToolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox);
+		textToolBar.setStyle("-fx-background-color: #800080");
+	}
+	
+	/**
+	 * This method generates the tool bar where the user can change the size of 
+	 * the font, the color of the font, the pen size, and the pen color. This
+	 * method also handles all of the change listeners associated with each of 
+	 * the options.
+	 */
+	private void createDrawToolBar() {
+		drawToolBar = new ToolBar();
+		penSizeLabel.setTextFill(Color.WHITE);
+		penColorLabel.setTextFill(Color.WHITE);
+		shapesLabel.setTextFill(Color.WHITE);
 		
 		// Pen size selector
 		penSizesBox = new ComboBox<Integer>(FXCollections.observableArrayList(penSizes));
@@ -691,7 +819,7 @@ public class FunnoteView extends Application implements Observer {
 			}
 		});
 		
-		toolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox, penSizeLabel, penSizesBox, penColorLabel, penColorBox, shapesLabel, shapesBox, textBoxButton);
-		toolBar.setStyle("-fx-background-color: #BA55D3");
+		drawToolBar.getItems().addAll(penSizeLabel, penSizesBox, penColorLabel, penColorBox, shapesLabel, shapesBox);
+		drawToolBar.setStyle("-fx-background-color: #800080");
 	}
 }

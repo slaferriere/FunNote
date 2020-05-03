@@ -15,11 +15,17 @@ public class Notebook implements Serializable {
 	protected String location;
 	private int numPages = 0;
 	protected String fName;
+	private String notebookName;
 	
-	public Notebook(File location, String fName) {
+	public Notebook(File location, String fName, String name) {
 		this.sections = new HashMap<String, Section>();
 		this.location = location.getAbsolutePath();
 		this.fName = fName;
+		this.notebookName = name;
+	}
+	
+	public HashMap<String, Section> getSections() {
+		return (HashMap<String, Section>) sections;
 	}
 	
 	public int getNumPages() {
@@ -28,6 +34,14 @@ public class Notebook implements Serializable {
 	
 	public String getURL() {
 		return fName;
+	}
+	
+	public String getLocation() {
+		return location;
+	}
+	
+	public String getNotebookName() {
+		return notebookName;
 	}
 	
 	public Page changePage(String section, String page) {
