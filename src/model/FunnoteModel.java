@@ -21,13 +21,14 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.EOFExc
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
+	public int sectionCount;
 		
 	public FunnoteModel() {
 		
 	}
 	
 	/**
-	 * 
+	 * This method
 	 * @return
 	 */
 	public String getCurrGC() {
@@ -46,7 +47,16 @@ public class FunnoteModel extends Observable {
 			if(!notebookF.createNewFile()) {
 				throw new IOException();
 			}
-			currNotebook = new Notebook(newNotebook, name + ".funnote");
+			currNotebook = new Notebook(newNotebook, name + ".funnote", name);
+			System.out.println("HERE");
+			try {
+				FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
+				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+				objectOut.writeObject(currNotebook);
+				objectOut.close();
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
 		} else {
 			throw new IOException();
 		}
@@ -62,6 +72,11 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers("blank page");
 	}
 	
+	/**
+	 * 
+	 * @param page
+	 * @throws IOException
+	 */
 	public void createPage(String page) throws IOException {
 		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
 		if(!photoLib.isDirectory()) throw new IOException();
@@ -153,7 +168,7 @@ public class FunnoteModel extends Observable {
 	 * 
 	 * @param dir
 	 */
-	public void changeNotebook(File dir) {
+	public void changeNotebook(File dir){
 		try {
 			FileInputStream input = new FileInputStream(dir.getAbsolutePath() + File.separator +
 					"notebook.funnote");
@@ -173,11 +188,13 @@ public class FunnoteModel extends Observable {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		} catch (EOFException e) {
-			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * 
+	 * @return
+	 */
 	public Notebook getNotebook() {
 		return currNotebook;
 	}
