@@ -248,6 +248,8 @@ public class FunnoteView extends Application implements Observer {
 		stackPane.setStyle("-fx-background-color: white");
 		//stackPane.getChildren().add(textArea);
 		
+		canvas.setStyle("-fx-background-color: transparent");
+		
 		stackPane.getChildren().add(pane);
 		stackPane.getChildren().add(canvas);
 
