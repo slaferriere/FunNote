@@ -12,15 +12,21 @@ public class TextboxNode implements Serializable {
 	protected String text;
 	protected double x;
 	protected double y;
-	protected double width;
-	protected double height;
+	protected double fontValue;
+	protected String color;
 	
-	public TextboxNode(String text, double x, double y, double width, double height) {
+	public TextboxNode(String text, double x, double y, double fontValue, String color) {
 		this.text = text;
 		this.x = x;
 		this.y = y;
-		this.width = width;
-		this.height = height;
+		this.fontValue = fontValue;
+		this.color = color;
 	}
+	
+	public String getText() { return text; }
+	public double getX() { return x; }
+	public double getY() { return y; }
+	public double getFontValue() { return fontValue; }
+	public String getColor() { return color; }
 	
 }

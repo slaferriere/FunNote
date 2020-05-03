@@ -26,4 +26,8 @@ public class Page implements Serializable{
 		this.canvasURL = canvasURL;
 	}
 	
+	public List<TextboxNode> getTextboxes() {
+		return textboxes;
+	}
+	
 }

@@ -18,6 +18,9 @@ import javax.imageio.ImageIO;
 
 import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.EOFException;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
@@ -197,6 +200,14 @@ public class FunnoteModel extends Observable {
 	 */
 	public Notebook getNotebook() {
 		return currNotebook;
+	}
+	
+	public void clearSavedTextBoxes() {
+		currNotebook.currSection.currPage.textboxes.clear();
+	}
+	
+	public void addTextBox(TextboxNode node) {
+		currNotebook.currSection.currPage.textboxes.add(node);
 	}
 	
 	/**

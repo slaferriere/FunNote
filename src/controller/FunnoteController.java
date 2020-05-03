@@ -4,9 +4,15 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.scene.text.Text;
+
 import java.awt.image.RenderedImage;
 
 import model.FunnoteModel;
+import model.TextboxNode;
 
 public class FunnoteController {
 	private FunnoteModel model;
@@ -74,7 +80,28 @@ public class FunnoteController {
 	/**
 	 * This method tells the model to save the current notebook
 	 */
-	public void save(RenderedImage image) throws IOException {
+	public void save(RenderedImage image, ObservableList<Node> textboxes) throws IOException {
+		String text;
+		double x;
+		double y;
+		double fontValue;
+		String color;
+		model.clearSavedTextBoxes();
+		for(Node textNode : textboxes) {
+			if(!(textNode instanceof Text)) {
+				System.err.println("Problem with text in pane");
+				System.exit(1);
+			}
+			Text textbox = (Text) textNode;
+			TextboxNode node;
+			text = textbox.getText();
+			x = textbox.getX();
+			y = textbox.getY();
+			fontValue = textbox.getFont().getSize();
+			color = textbox.getFill().toString();
+			node = new TextboxNode(text, x, y, fontValue, color);
+			model.addTextBox(node);
+		}
 		model.save(image);
 	}
 	

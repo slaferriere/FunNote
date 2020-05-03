@@ -60,6 +60,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
@@ -73,6 +74,7 @@ import javafx.stage.Stage;
 import model.FunnoteModel;
 import model.Page;
 import model.Section;
+import model.TextboxNode;
 
 /**
  * This is the main class that displays everything on the screen. It will update the controller
@@ -277,11 +279,16 @@ public class FunnoteView extends Application implements Observer {
 	public void update(Observable obs, Object obj) {
 		if(obj instanceof String) {
 			String input = (String) obj;
-			if(input.compareTo("blank page") == 0)
+			if(input.compareTo("blank page") == 0) {
 				graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+				pane.getChildren().clear();
+				canvas.setStyle("-fx-background-color: transparent");
+			}
 		}
 		else {
 			graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			pane.getChildren().clear();
+			canvas.setStyle("-fx-background-color: transparent");
 			if(!(obj instanceof Page)) {
 				System.out.println("Problem with Page");
 				System.exit(1);
@@ -291,6 +298,14 @@ public class FunnoteView extends Application implements Observer {
 			try {
 				Image canvasImage = new Image(new FileInputStream(imageURL));
 				graphicsContext.drawImage(canvasImage, 0, 0);
+				
+				for(TextboxNode node : page.getTextboxes()) {
+					graphicsContext.setFont(new Font(node.getFontValue()));
+					graphicsContext.setFill(Paint.valueOf(node.getColor()));
+					graphicsContext.fillText(node.getText(), node.getX(), node.getY());
+				}
+				graphicsContext.setFill(Paint.valueOf(currentPenColor));
+				graphicsContext.setStroke(Paint.valueOf(currentPenColor));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -606,8 +621,9 @@ public class FunnoteView extends Application implements Observer {
 						(int) canvas.getWidth(), (int) canvas.getHeight());
 				canvas.snapshot(null, image);
 				RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
+				ObservableList<Node> textboxes = pane.getChildren();
 				try {
-					controller.save(renderedImage);
+					controller.save(renderedImage, textboxes);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
