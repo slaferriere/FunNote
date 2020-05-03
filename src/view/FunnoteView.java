@@ -45,6 +45,7 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToolBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.InnerShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -65,6 +66,7 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
@@ -129,6 +131,10 @@ public class FunnoteView extends Application implements Observer {
 	private int count = 0;
 	private String currSection = "";
 	private String currPage = "";
+	private Button boldButton;
+	private Button italicizeButton;
+	private boolean bold;
+	private boolean italic;
 	
 	/**
 	 * This method is called by FunNote.java and initializes 
@@ -165,15 +171,26 @@ public class FunnoteView extends Application implements Observer {
 				text = new Text();
 				text.setX(xCoord);
 				text.setY(yCoord);
-				text.setFont(Font.font(currentFontSize));
+				text.setFont(Font.font("Verdana", currentFontSize));
+				if(bold && italic) {
+					text.setFont(Font.font("Verdana", FontWeight.BOLD, FontPosture.ITALIC, currentFontSize));
+            	}
+				else if(bold) {
+					text.setFont(Font.font("Verdana", FontWeight.BOLD, currentFontSize));
+            	}
+				else if(italic) {
+					text.setFont(Font.font("Verdana", FontPosture.ITALIC, currentFontSize));
+            	}				
 				getTextColor();
 				pane.getChildren().add(text);
+				pane.requestFocus();
 			}
 		});
 		
 		pane.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+            	getTextColor();
             	text.setText(text.getText() + event.getText());
             }
         });
@@ -247,8 +264,31 @@ public class FunnoteView extends Application implements Observer {
 		    }
 		});
 		
+		boldButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent e) {
+		    	if(bold) {
+		    		bold = false;
+		    		boldButton.setEffect(null);	    		
+		    	} else {
+		    		bold = true;
+		    		boldButton.setEffect(new InnerShadow());
+		    	}
+		    }
+		});
+		
+		italicizeButton.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override public void handle(ActionEvent e) {
+		    	if(italic) {
+		    		italic = false;
+		    		italicizeButton.setEffect(null);	    		
+		    	} else {
+		    		italic = true;
+		    		italicizeButton.setEffect(new InnerShadow());
+		    	}
+		    }
+		});
+		
 		stackPane.setStyle("-fx-background-color: white");
-		//stackPane.getChildren().add(textArea);
 		
 		canvas.setStyle("-fx-background-color: transparent");
 		
@@ -313,6 +353,11 @@ public class FunnoteView extends Application implements Observer {
 		}
 	}
 	
+	/**
+	 * This method sets the fill and the stroke of the paint object based on what is in the selection box.
+	 * 
+	 * @param gc Canvas graphicsContext
+	 */
 	private void draw(GraphicsContext gc) {
 	
 		// Font color 
@@ -345,7 +390,11 @@ public class FunnoteView extends Application implements Observer {
 		gc.setLineWidth(currentPenSize);
 	}
 	
+
+	
 	/**
+	 * This method sets the color of the text based on the user's selection
+     * editingText
 	 * 
 	 */
 	private void getTextColor() {
@@ -623,6 +672,7 @@ public class FunnoteView extends Application implements Observer {
 				WritableImage image = new WritableImage(
 						(int) canvas.getWidth(), (int) canvas.getHeight());
 				canvas.snapshot(null, image);
+			//	pane.snapshot(null, image);
 				RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
 				ObservableList<Node> textboxes = pane.getChildren();
 				try {
@@ -771,9 +821,18 @@ public class FunnoteView extends Application implements Observer {
 		fontSizeLabel.setTextFill(Color.WHITE);
 		fontColorLabel.setTextFill(Color.WHITE);
 		
+
+		boldButton = new Button("Bold");
+		boldButton.setStyle("-fx-font: bold 11pt \"Arial\";");
+		
+		italicizeButton = new Button("Italic");
+		italicizeButton.setStyle("-fx-font: italic 11pt \"Arial\";");
+
+
+		
 		// Font size selector
 		fontSizesBox = new ComboBox<Integer>(FXCollections.observableArrayList(fontSizes));
-		fontSizesBox.getSelectionModel().selectFirst();
+		fontSizesBox.getSelectionModel().select(8);
 		fontSizesBox.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldVal, Integer newVal) {
@@ -792,7 +851,7 @@ public class FunnoteView extends Application implements Observer {
 			}
 		});
 		
-		textToolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox);
+		textToolBar.getItems().addAll(fontSizeLabel, fontSizesBox, fontColorLabel, fontColorBox, boldButton, italicizeButton);
 		textToolBar.setStyle("-fx-background-color: #800080");
 	}
 	
