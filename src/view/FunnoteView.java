@@ -817,6 +817,9 @@ public class FunnoteView extends Application implements Observer {
 		mainMenuBar.setStyle("-fx-background-color: #d3d3d3");
 	}
 	
+	/**
+	 * 
+	 */
 	private void showInvalidNotebookFileAlert() {
 		Alert alert = new Alert(AlertType.ERROR);
 		alert.setTitle("ERROR");
