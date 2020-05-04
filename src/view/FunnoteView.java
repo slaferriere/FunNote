@@ -676,6 +676,7 @@ public class FunnoteView extends Application implements Observer {
 		
 		clearPage.setOnAction(e -> {
 			graphicsContext.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			pane.getChildren().clear();
 		});	
 		
 		savePage.setOnAction(e -> {
