@@ -818,7 +818,7 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	/**
-	 * 
+	 * This method
 	 */
 	private void showInvalidNotebookFileAlert() {
 		Alert alert = new Alert(AlertType.ERROR);
