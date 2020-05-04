@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -311,7 +312,7 @@ public class FunnoteView extends Application implements Observer {
 		createVbox();
 		
 		window.setCenter(stackPane);
-	
+
 		// Create the primary scene
 		Scene scene = new Scene(window, 1500, 1000); 
 		
@@ -467,8 +468,9 @@ public class FunnoteView extends Application implements Observer {
 	 * This method generates the vbox on the left side of the screen that contains 
 	 * information regarding the current notebook, sections, and pages. From this 
 	 * vbox the user can change the notebook, section, and page.
+	 * @throws URISyntaxException 
 	 */
-	private void createVbox() {
+	private void createVbox() throws URISyntaxException {
 		TitledPane notebookTp = new TitledPane();
 		HBox sectionHbox = new HBox();
 		HBox pageHbox = new HBox();
@@ -525,7 +527,12 @@ public class FunnoteView extends Application implements Observer {
 				window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
 			}		
 			
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		notebookTp.setExpanded(false);
 		
@@ -560,7 +567,12 @@ public class FunnoteView extends Application implements Observer {
 				currSection = getSection.partChosen;
 				controller.changeSection(getSection.partChosen);
 			}
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		sectionTp.setExpanded(false);
 		
@@ -596,10 +608,19 @@ public class FunnoteView extends Application implements Observer {
 				currPage = getPage.partChosen;
 				controller.changePage(getPage.partChosen);
 			}
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		pageTp.setExpanded(false);
 
+		Image main_logo = new Image(getClass().getResource("/res/main_logo.jpg").toURI().toString(), 400, 150, false, false);
+		ImageView iv = new ImageView(main_logo);
+		
+		
 		sectionHbox.setSpacing(5);
 		sectionHbox.setAlignment(Pos.CENTER);
 		pageHbox.setSpacing(5);
@@ -609,7 +630,8 @@ public class FunnoteView extends Application implements Observer {
 		vbox.setPadding(new Insets(10, 10, 10, 10));
 		vbox.setSpacing(10);
 		vbox.setAlignment(Pos.TOP_CENTER);
-		vbox.getChildren().addAll(currMode, textBoxButton, notebookTp, sectionHbox, pageHbox);  
+		vbox.getChildren().addAll(currMode, textBoxButton, notebookTp, sectionHbox, pageHbox, iv); 
+
 		count++;
 		window.setLeft(vbox);
 	}
@@ -729,7 +751,12 @@ public class FunnoteView extends Application implements Observer {
 				window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
 			}
 			
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		createSection.setOnAction(e -> {
@@ -750,7 +777,12 @@ public class FunnoteView extends Application implements Observer {
 				}
 			}
 			
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		createNewPage.setOnAction(e -> {
@@ -776,7 +808,12 @@ public class FunnoteView extends Application implements Observer {
 				}
 			}
 			
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		addCurrPage.setOnAction(e -> {
@@ -806,7 +843,12 @@ public class FunnoteView extends Application implements Observer {
 				}
 			}
 			
-			createVbox();
+			try {
+				createVbox();
+			} catch (URISyntaxException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		});
 		
 		// Add menu items to file dropdown
