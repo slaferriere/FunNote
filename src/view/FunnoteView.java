@@ -254,7 +254,17 @@ public class FunnoteView extends Application implements Observer {
 		    		window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
 		    		currMode.setText("Current Mode: Draw");
 		    		
-		    		
+		    		ObservableList<Node> textboxes = pane.getChildren();
+		    		graphicsContext.save();
+		    		for(Node box : textboxes) {
+		    			if(!(box instanceof Text)) { System.exit(1); }
+		    			Text text = (Text) box;
+		    			graphicsContext.setFill(Paint.valueOf(text.getFill().toString()));
+		    			graphicsContext.setFont(text.getFont());
+		    			graphicsContext.fillText(text.getText(), text.getX(), text.getY());
+		    		}
+		    		graphicsContext.restore();
+		    		pane.getChildren().clear();
 		    		
 		    	} else {
 			        textBoxClicked = true;
@@ -341,14 +351,6 @@ public class FunnoteView extends Application implements Observer {
 			try {
 				Image canvasImage = new Image(new FileInputStream(imageURL));
 				graphicsContext.drawImage(canvasImage, 0, 0);
-				
-				for(TextboxNode node : page.getTextboxes()) {
-					graphicsContext.setFont(new Font(node.getFontValue()));
-					graphicsContext.setFill(Paint.valueOf(node.getColor()));
-					graphicsContext.fillText(node.getText(), node.getX(), node.getY());
-				}
-				graphicsContext.setFill(Paint.valueOf(currentPenColor));
-				graphicsContext.setStroke(Paint.valueOf(currentPenColor));
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -674,14 +676,25 @@ public class FunnoteView extends Application implements Observer {
 				alert.setContentText("Create a Section First");
 				alert.showAndWait();
 			} else {
+	    		ObservableList<Node> textboxes = pane.getChildren();
+	    		graphicsContext.save();
+	    		for(Node box : textboxes) {
+	    			if(!(box instanceof Text)) { System.exit(1); }
+	    			Text text = (Text) box;
+	    			graphicsContext.setFill(Paint.valueOf(text.getFill().toString()));
+	    			graphicsContext.setFont(text.getFont());
+	    			graphicsContext.fillText(text.getText(), text.getX(), text.getY());
+	    		}
+	    		graphicsContext.restore();
+	    		pane.getChildren().clear();
+				
 				WritableImage image = new WritableImage(
 						(int) canvas.getWidth(), (int) canvas.getHeight());
 				canvas.snapshot(null, image);
 			//	pane.snapshot(null, image);
 				RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
-				ObservableList<Node> textboxes = pane.getChildren();
 				try {
-					controller.save(renderedImage, textboxes);
+					controller.save(renderedImage);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

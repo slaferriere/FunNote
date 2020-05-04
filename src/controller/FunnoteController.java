@@ -80,28 +80,7 @@ public class FunnoteController {
 	/**
 	 * This method tells the model to save the current notebook
 	 */
-	public void save(RenderedImage image, ObservableList<Node> textboxes) throws IOException {
-		String text;
-		double x;
-		double y;
-		double fontValue;
-		String color;
-		model.clearSavedTextBoxes();
-		for(Node textNode : textboxes) {
-			if(!(textNode instanceof Text)) {
-				System.err.println("Problem with text in pane");
-				System.exit(1);
-			}
-			Text textbox = (Text) textNode;
-			TextboxNode node;
-			text = textbox.getText();
-			x = textbox.getX();
-			y = textbox.getY();
-			fontValue = textbox.getFont().getSize();
-			color = textbox.getFill().toString();
-			node = new TextboxNode(text, x, y, fontValue, color);
-			model.addTextBox(node);
-		}
+	public void save(RenderedImage image) throws IOException {
 		model.save(image);
 	}
 	
