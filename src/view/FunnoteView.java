@@ -236,6 +236,9 @@ public class FunnoteView extends Application implements Observer {
 		    		textBoxButton.setText("Click to Write Text");
 		    		window.setTop(new VBox(mainMenuBar, hbox, drawToolBar));
 		    		currMode.setText("Current Mode: Draw");
+		    		
+		    		
+		    		
 		    	} else {
 			        textBoxClicked = true;
 		    		textBoxButton.setText("Click to Draw");
@@ -378,6 +381,8 @@ public class FunnoteView extends Application implements Observer {
             Node topNode = childs.get(childs.size()-1);
             topNode.toBack();
         }
+        
+        
     }
 	
 
