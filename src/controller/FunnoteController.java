@@ -58,18 +58,6 @@ public class FunnoteController {
 	}
 	
 	/**
-	 * This method will change the page to the string passed to it
-	 * @param page String of which page is requested
-	 */
-	public void changePage(String page) {
-		model.changePage(page);
-	}
-	
-	public void changeSection(String section) {
-		model.changeSection(section);
-	}
-	
-	/**
 	 * This method will choose which notebook is being observed
 	 * currently. This will affect what file is being saved
 	 * @param notebook Which notebook to navigate to
@@ -77,6 +65,20 @@ public class FunnoteController {
 	public void changeNotebook(File dir) {
 		model.changeNotebook(dir);
 	}
+	
+	public void changeSection(String section) {
+		model.changeSection(section);
+	}
+	
+	/**
+	 * This method will change the page to the string passed to it
+	 * @param page String of which page is requested
+	 */
+	public void changePage(String page) {
+		model.changePage(page);
+	}
+	
+	
 	/**
 	 * This method tells the model to save the current notebook
 	 */

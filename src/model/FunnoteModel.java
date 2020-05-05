@@ -51,7 +51,6 @@ public class FunnoteModel extends Observable {
 				throw new IOException();
 			}
 			currNotebook = new Notebook(newNotebook, name + ".funnote", name);
-			System.out.println("HERE");
 			try {
 				FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
 				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
@@ -147,28 +146,6 @@ public class FunnoteModel extends Observable {
 	
 	/**
 	 * 
-	 * @param notebook
-	 * @param section
-	 * @param page
-	 */
-	public void changePage(String page) {
-		currNotebook.currSection.changePage(page);
-		this.setChanged();
-		this.notifyObservers(currNotebook.currSection.currPage);
-	}
-	
-	public void changeSection(String section) {
-		currNotebook.changeSection(section);
-		this.setChanged();
-		if(currNotebook.currSection.currPage == null) {
-			this.notifyObservers("blank page");
-		} else {
-			this.notifyObservers(currNotebook.currSection.currPage);
-		}
-	}
-	
-	/**
-	 * 
 	 * @param dir
 	 */
 	public void changeNotebook(File dir){
@@ -192,6 +169,28 @@ public class FunnoteModel extends Observable {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void changeSection(String section) {
+		currNotebook.changeSection(section);
+		this.setChanged();
+		if(currNotebook.currSection.currPage == null) {
+			this.notifyObservers("blank page");
+		} else {
+			this.notifyObservers(currNotebook.currSection.currPage);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param notebook
+	 * @param section
+	 * @param page
+	 */
+	public void changePage(String page) {
+		currNotebook.currSection.changePage(page);
+		this.setChanged();
+		this.notifyObservers(currNotebook.currSection.currPage);
 	}
 	
 	/**
