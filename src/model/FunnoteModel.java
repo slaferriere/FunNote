@@ -21,6 +21,14 @@ import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.EOFExc
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
+/**
+ * This is the model of the application. The main method of the model is to create new pages, sections, and notebooks
+ * as well as save them to a directory on the user's device.
+ * 
+ * @author Scott LaFerriere, Trevor Freudig, Alexander Thompson, Michael Tuohy
+ *
+ */
+
 public class FunnoteModel extends Observable {
 	
 	private Notebook currNotebook;
@@ -31,13 +39,22 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * This method
-	 * @return
+	 * This method returns the canvas of the current Page, Section, and Notebook
+	 * @return URL of JavaFX canvas
 	 */
 	public String getCurrGC() {
 		return currNotebook.currSection.currPage.getCanvasURL();
 	}
 	
+	/**
+	 * This method creates a new notebook in the user inputed directory. It throws an IOException if the directory
+	 * already exists. If not, it creates a new directory and Notebook
+	 * 
+	 * 
+	 * @param name- name of Notebook
+	 * @param dir- directory of where to create new Notebook
+	 * @throws IOException
+	 */
 	public void createNotebook(String name, File dir) throws IOException {
 		String path = dir.getAbsolutePath() + File.separator + name;
 		File newNotebook = new File(path);
@@ -66,8 +83,8 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
-	 * @param sectionName
+	 * This method creates a new Section and adds that section to the current Notebook
+	 * @param sectionName- name of Section
 	 */
 	public void createSection(String sectionName) {
 		currNotebook.addSection(sectionName);
@@ -76,8 +93,9 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
-	 * @param page
+	 * This method creates a new Page in the current Section. It also numbers the page number accordingly based
+	 * on how many current Pages there are.
+	 * @param page- Name of Page
 	 * @throws IOException
 	 */
 	public void createPage(String page) throws IOException {
@@ -93,6 +111,15 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers("blank page");
 	}
 	
+	/**
+	 * This method takes a previously saved Page and redraws that canvas onto the current Page.
+	 * It then adds the Page to the current Section
+	 * 
+	 * 
+	 * @param page- name of saved Page
+	 * @param image- image of Canvas
+	 * @throws IOException
+	 */
 	public void addCurrentPage(String page, RenderedImage image) throws IOException {
 		File photoLib = new File(currNotebook.location + File.separator + "pageImages");
 		if(!photoLib.isDirectory()) {
@@ -105,6 +132,11 @@ public class FunnoteModel extends Observable {
 		currNotebook.currSection.addPage(page, "page_" + numPage + ".png");
 	}
 	
+	/**
+	 * This method returns whether or not the current Notebook contains a Section
+	 * 
+	 * @return true if Notebook contains a Section, false otherwise
+	 */
 	public boolean hasSection() {
 		if(currNotebook == null) {
 			return false;
@@ -114,10 +146,18 @@ public class FunnoteModel extends Observable {
 		return true;
 	}
 	
+	/**
+	 * This method returns whether or not there is a Notebook currently generated
+	 * @return true if there is a Notebook, false otherwise
+	 */
 	public boolean hasNotebook() {
 		return currNotebook != null;
 	}
 	
+	/**
+	 * This method returns whether or not the current Notebook has a Section/Page
+	 * @return true if Notebook contains a Page, false otherwise
+	 */
 	public boolean hasPage() {
 		if(currNotebook == null) return false;
 		else if(currNotebook.currSection == null) return false;
@@ -125,6 +165,12 @@ public class FunnoteModel extends Observable {
 		return true;
 	}
 	
+	/**
+	 * This method returns a list of all the Sections in the current Notebook. It uses an iterator to go through all of
+	 * the sections in the current Notebook and returns a list of those Sections
+	 * 
+	 * @return List of Strings of Section names
+	 */
 	public List<String> getSectionList() {
 		List<String> sectionList = new LinkedList<String>();
 		Set<String> keySet = currNotebook.sections.keySet();
@@ -135,6 +181,11 @@ public class FunnoteModel extends Observable {
 		return sectionList;
 	}
 	
+	/**
+	 * This method returns a list of all the Pages in the current Section. It uses an iterator to go through all of
+	 * the Pages in the current Section and returns a list of those Pages
+	 * @return List of Strings of Page names
+	 */
 	public List<String> getPageList() {
 		List<String> pageList = new LinkedList<String>();
 		Set<String> keySet = currNotebook.currSection.pages.keySet();
@@ -146,10 +197,8 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
-	 * @param notebook
-	 * @param section
-	 * @param page
+	 * This method changes the current Page
+	 * @param page- Desired Page to switch to
 	 */
 	public void changePage(String page) {
 		currNotebook.currSection.changePage(page);
@@ -157,6 +206,11 @@ public class FunnoteModel extends Observable {
 		this.notifyObservers(currNotebook.currSection.currPage);
 	}
 	
+	/**
+	 * This method changes the current Section. It first determines if the Section is empty or not and then changes to
+	 * said Section
+	 * @param section- Desired Section to switch to
+	 */
 	public void changeSection(String section) {
 		currNotebook.changeSection(section);
 		this.setChanged();
@@ -168,8 +222,8 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
-	 * @param dir
+	 * This method changes the current Notebook. It uses a File and Object Input Stream to change the desired Notebook
+	 * @param dir- directory of desired Notebook
 	 */
 	public void changeNotebook(File dir){
 		try {
@@ -195,24 +249,33 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
-	 * 
-	 * @return
+	 * This method returns the current Notebook
+	 * @return- current Notebook
 	 */
 	public Notebook getNotebook() {
 		return currNotebook;
 	}
 	
+	/**
+	 * This method clears all the saved Textboxes on the current Page
+	 * 
+	 */
 	public void clearSavedTextBoxes() {
 		currNotebook.currSection.currPage.textboxes.clear();
 	}
 	
+	/**
+	 * This method adds a new TextboxNode to the page
+	 * @param node
+	 */
 	public void addTextBox(TextboxNode node) {
 		currNotebook.currSection.currPage.textboxes.add(node);
 	}
 	
 	/**
-	 * 
-	 * @param canvas
+	 * This method saves a snapshot of the canvas to the current Notebook directory. Writes a FileOutputStream
+	 * to the user defined directory
+	 * @param current state of canvas
 	 */
 	public void save(RenderedImage image) throws IOException {
 		String pathToDir = currNotebook.location;
@@ -232,6 +295,12 @@ public class FunnoteModel extends Observable {
 		}
 	}
 	
+	/**
+	 * This method returns the path of the current Page
+	 * 
+	 * @param imageNum- current Page
+	 * @return path to current Page
+	 */
 	public String getPageImageURL(String imageNum) {
 		return currNotebook.location + File.separator + "pageImages"
 				+ File.separator + imageNum;

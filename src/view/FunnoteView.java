@@ -328,7 +328,8 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	/**
-	 * Required update method for the observer/observable design pattern
+	 * Required update method for the observer/observable design pattern. When updating, it clears the canvas by 
+	 * drawing a full white rectangle as well as clears all Text from the Pane
 	 */
 	public void update(Observable obs, Object obj) {
 		if(obj instanceof String) {
@@ -425,7 +426,10 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	
-	// Swaps the canvas with the pane and vice versa. Is called when "Write Text" button is clicked
+	/**
+	 * This method switches the order of the Canvas and Pane on the StackPane in order to write text on Pane
+	 * versus drawing on Canvas
+	 */
 	private void changeTop() {
         ObservableList<Node> childs = this.stackPane.getChildren();
  
@@ -440,8 +444,15 @@ public class FunnoteView extends Application implements Observer {
 
 	
 	
-	// This method draws the specified shape. It clears the previous shape so the user can drag and drop. Only issue is when
-	// two shapes overlap it clears the one under.
+	/**
+	 * This method draws the user selected shape (Rectangle or Oval) based on the the coordinates of the mouse Event handler
+	 * 
+	 * @param gc GraphicsContext of canvas
+	 * @param startX- starting X-coordinate 
+	 * @param startY- starting Y-coordinate
+	 * @param endX- ending X-coordinate
+	 * @param endY- ending Y-coordinate
+	 */
 	private void drawShape(GraphicsContext gc, double startX, double startY, double endX, double endY) {
 		
 		gc.clearRect(prevShape[0], prevShape[1], prevShape[2], prevShape[3]);
@@ -638,7 +649,8 @@ public class FunnoteView extends Application implements Observer {
 	
 	
 	/**
-	 * This method creates the menu bar for the main stage/scene.
+	 * This method creates the menu bar for the main stage/scene as well as contains all the event handlers for
+	 * creating and saving new Pages/Sections/Notebooks
 	 */
 	private void createMenuBar() {
 		// File Menu
@@ -861,7 +873,7 @@ public class FunnoteView extends Application implements Observer {
 	}
 	
 	/**
-	 * This method
+	 * This method alerts the user if the desired Directory is in the right format
 	 */
 	private void showInvalidNotebookFileAlert() {
 		Alert alert = new Alert(AlertType.ERROR);
