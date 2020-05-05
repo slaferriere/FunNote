@@ -19,7 +19,7 @@ import model.FunnoteModel;
  */
 public class FunnoteControllerTests {
 
-	private static final String TEMP_DIRECTORY = System.getProperty("user.home") + "/Desktop";
+	private static final String TEMP_DIRECTORY = System.getProperty("user.home") + "/Desktop/";
 	FunnoteModel model = new FunnoteModel();
 	FunnoteController controller = new FunnoteController(model);
 	File dir = new File(TEMP_DIRECTORY);
@@ -39,9 +39,11 @@ public class FunnoteControllerTests {
 	
 	@Test
 	void testChange() {
-		controller.changeNotebook(dir);
+		controller.changeNotebook(new File(dir.getAbsolutePath() + "\\testNotebook"));
 		controller.changeSection("testSection1");
 		controller.changePage("testPage1");
+		
+		assertEquals(model.getNotebook().getCurrSection(), model.getNotebook().getSections().get("testSection1"));
 	}
 	
 	@Test

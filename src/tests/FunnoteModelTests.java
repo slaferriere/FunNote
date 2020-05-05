@@ -2,6 +2,8 @@ package tests;
 
 import org.junit.jupiter.api.Test;
 
+import model.FunnoteModel;
+
 /**
  * This class collects all of the test methods for FunnoteModel.java, Notebook.java,
  * Page.java, and Section.java.
@@ -42,7 +44,8 @@ public class FunnoteModelTests {
 	
 	@Test
 	void testGetGC() {
-
+		FunnoteModel fnm = new FunnoteModel();
+		
 	}
 	
 	@Test

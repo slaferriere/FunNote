@@ -118,4 +118,13 @@ public class Notebook implements Serializable {
 		this.currSection = this.sections.get(section);
 		return this.currSection;
 	}
+	
+	/**
+	 * This method gets the current section
+	 * Used for testcase reasons
+	 * @return current Section
+	 */
+	public Section getCurrSection() {
+		return currSection;
+	}
 }

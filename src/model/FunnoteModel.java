@@ -79,6 +79,7 @@ public class FunnoteModel extends Observable {
 		} else {
 			throw new IOException();
 		}
+		newNotebook.delete();
 	}
 	
 	/**
