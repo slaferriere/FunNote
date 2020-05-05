@@ -19,7 +19,7 @@ import model.FunnoteModel;
  */
 public class FunnoteControllerTests {
 
-	private static final String TEMP_DIRECTORY = System.getProperty("user.home") + "/Desktop/funnote";
+	private static final String TEMP_DIRECTORY = System.getProperty("user.home") + "/Desktop";
 	FunnoteModel model = new FunnoteModel();
 	FunnoteController controller = new FunnoteController(model);
 	File dir = new File(TEMP_DIRECTORY);
