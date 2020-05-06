@@ -68,7 +68,6 @@ public class FunnoteModel extends Observable {
 				throw new IOException();
 			}
 			currNotebook = new Notebook(newNotebook, name + ".funnote", name);
-			System.out.println("HERE");
 			try {
 				FileOutputStream fileOut = new FileOutputStream(currNotebook.location + File.separator + "notebook.funnote");
 				ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
@@ -80,6 +79,7 @@ public class FunnoteModel extends Observable {
 		} else {
 			throw new IOException();
 		}
+		newNotebook.delete();
 	}
 	
 	/**
@@ -197,6 +197,8 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
+	 * 
+	 * @param dir
 	 * This method changes the current Page
 	 * @param page- Desired Page to switch to
 	 */
