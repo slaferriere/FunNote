@@ -232,6 +232,7 @@ public class FunnoteModel extends Observable {
 			ObjectInputStream objectIn = new ObjectInputStream(input);
 			currNotebook = (Notebook) objectIn.readObject();
 			objectIn.close();
+			currNotebook.location = dir.getAbsolutePath();
 			this.setChanged();
 			if(this.hasPage()) {
 				this.notifyObservers(currNotebook.currSection.currPage);
