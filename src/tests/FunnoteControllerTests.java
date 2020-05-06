@@ -26,6 +26,9 @@ public class FunnoteControllerTests {
 	
 	@Test
 	void testAdd() throws IOException {
+		/**
+		 * Must delete directory after each time running testcase for proper results
+		 */
 		controller.addNewNotebook("testNotebook", dir);
 		controller.addNewSection("testSection");
 		controller.addNewSection("testSection1");
@@ -40,6 +43,8 @@ public class FunnoteControllerTests {
 	@Test
 	void testChange() {
 		controller.changeNotebook(new File(dir.getAbsolutePath() + "\\testNotebook"));
+		controller.addNewSection("testSection");
+		controller.addNewSection("testSection1");
 		controller.changeSection("testSection1");
 		controller.changePage("testPage1");
 		
