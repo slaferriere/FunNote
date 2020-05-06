@@ -81,13 +81,17 @@ public class FunnoteTests {
 		assertEquals(tbNode.getFontValue(), 15, 1);
 		assertEquals(tbNode.getColor(), "blue");
 		
-		controller.changeNotebook(new File(dir.getAbsolutePath() + "\\testNotebook"));
+		controller.addNewNotebook("testNotebook1", dir);
+		controller.addNewSection("testSection");
+		controller.addNewSection("testSection1");
+		controller.addNewPage("testPage");
+		controller.addNewPage("testPage1");
 		controller.changeSection("testSection1");
 		controller.changePage("testPage1");
-
+		
 		controller.getModel().addTextBox(tbNode);
 		
-		assertEquals(model.getTextBox(tbNode), tbNode);
+		assertEquals(controller.getModel().getTextBox(tbNode), tbNode);
 	}
 	
 	@Test
