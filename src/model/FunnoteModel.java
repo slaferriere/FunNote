@@ -241,7 +241,6 @@ public class FunnoteModel extends Observable {
 				this.notifyObservers("blank page");
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
