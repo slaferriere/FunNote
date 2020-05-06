@@ -275,6 +275,15 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
+	 * This method gets a TextboxNode from the page
+	 * @param node
+	 * @return 
+	 */
+	public TextboxNode getTextBox(TextboxNode node) {
+		return currNotebook.currSection.currPage.textboxes.get(0);
+	}
+	
+	/**
 	 * This method saves a snapshot of the canvas to the current Notebook directory. Writes a FileOutputStream
 	 * to the user defined directory
 	 * @param current state of canvas

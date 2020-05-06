@@ -3,11 +3,20 @@ package tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
+
 import org.junit.jupiter.api.Test;
 import controller.FunnoteController;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import model.FunnoteModel;
+import model.TextboxNode;
 
 /**
  * This class collects all of the test methods for FunnoteController.java.
@@ -38,6 +47,9 @@ public class FunnoteTests {
 		assertTrue(controller.hasNotebook());
 		assertTrue(controller.hasSection());
 		assertTrue(controller.hasPage());
+		assertEquals(controller.getModel().getNotebook().getURL(), "testNotebook.funnote");
+		assertEquals(controller.getModel().getNotebook().getNotebookName(), "testNotebook");
+
 	}
 	
 	@Test
@@ -52,8 +64,30 @@ public class FunnoteTests {
 	}
 	
 	@Test
-	void testSave() {
+	void testSave() throws IOException {
+		Image image = new Image("https://people.groupon.com/wp-content/uploads/2018/08/UofA-Logo.jpg");
+		RenderedImage renderedImage = SwingFXUtils.fromFXImage(image, null);
+		
+		controller.save(renderedImage);
+	}
+	
+	@Test
+	void testTextBox() throws IOException {
+		TextboxNode tbNode = new TextboxNode("sample text", 50, 50, 15, "blue");
+		
+		assertEquals(tbNode.getText(), "sample text");
+		assertEquals(tbNode.getX(), 50, 1);
+		assertEquals(tbNode.getY(), 50, 1);
+		assertEquals(tbNode.getFontValue(), 15, 1);
+		assertEquals(tbNode.getColor(), "blue");
+		
+		controller.changeNotebook(new File(dir.getAbsolutePath() + "\\testNotebook"));
+		controller.changeSection("testSection1");
+		controller.changePage("testPage1");
 
+		controller.getModel().addTextBox(tbNode);
+		
+		assertEquals(model.getTextBox(tbNode), tbNode);
 	}
 	
 	@Test
