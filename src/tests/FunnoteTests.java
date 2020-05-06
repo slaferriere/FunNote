@@ -2,6 +2,7 @@ package tests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
@@ -92,6 +93,11 @@ public class FunnoteTests {
 		controller.getModel().addTextBox(tbNode);
 		
 		assertEquals(controller.getModel().getTextBox(tbNode), tbNode);
+		
+		controller.getModel().clearSavedTextBoxes();
+		
+		Throwable exception = assertThrows(IndexOutOfBoundsException.class, () -> controller.getModel().getTextBox(tbNode));
+		assertEquals("Index: 0, Size: 0", exception.getMessage());
 	}
 	
 	@Test
