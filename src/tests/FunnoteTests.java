@@ -17,7 +17,7 @@ import model.FunnoteModel;
  * @author Trevor Freudig, Alexander Thompson, Michael Tuohy, Scott LaFerriere
  * 
  */
-public class FunnoteControllerTests {
+public class FunnoteTests {
 
 	private static final String TEMP_DIRECTORY = System.getProperty("user.home") + "/Desktop/";
 	FunnoteModel model = new FunnoteModel();
