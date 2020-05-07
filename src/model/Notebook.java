@@ -80,17 +80,6 @@ public class Notebook implements Serializable {
 	}
 	
 	/**
-	 * This method changes the Page of the current Section
-	 * @param section- current Section name
-	 * @param page- Page name being switched to
-	 * @return new Page
-	 */
-	public Page changePage(String section, String page) {
-		this.currSection = sections.get(section);
-		return this.currSection.changePage(page);
-	}
-	
-	/**
 	 * This method adds a new Section to the current Notebook
 	 * @param section name of new Section
 	 */
@@ -99,15 +88,6 @@ public class Notebook implements Serializable {
 		currSection = this.sections.get(section);
 	}
 	
-	/**
-	 * This method adds a new Page to the current Section
-	 * @param section name of current Section
-	 * @param page name of New Page
-	 * @param canvasURL Path to canvas URL
-	 */
-	public void addPage(String section, String page, String canvasURL) {
-		this.sections.get(section).addPage(page, canvasURL);
-	}
 	
 	/**
 	 * This method changes the current Section

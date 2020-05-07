@@ -258,6 +258,21 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
+	 * This method gets the current section
+	 * @return Section current section
+	 */
+	public Section getSection() {
+		return currNotebook.currSection;
+	}
+	
+	/**
+	 * This method gets the current page
+	 * @return Page current page
+	 */
+	public Page getPage() {
+		return currNotebook.currSection.currPage;
+	}
+	/**
 	 * This method clears all the saved Textboxes on the current Page
 	 * 
 	 */
