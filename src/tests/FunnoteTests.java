@@ -24,6 +24,9 @@ import model.TextboxNode;
  * 
  * In eclipse, run using JUnit 5.
  * 
+ * NOTE: AFTER EACH TEST, YOU MUST GO TO YOUR DESKTOP AND REMOVE THE CREATED NOTEBOOK
+ * DIRECTORIES. 
+ * 
  * @author Trevor Freudig, Alexander Thompson, Michael Tuohy, Scott LaFerriere
  * 
  */
@@ -36,9 +39,6 @@ public class FunnoteTests {
 	
 	@Test
 	void testNotebook() throws IOException {
-		/**
-		 * Must delete directory after each time running testcase for proper results
-		 */
 		controller.addNewNotebook("testNotebook", dir);
 		controller.addNewSection("testSection");
 		controller.addNewSection("testSection1");
@@ -79,6 +79,7 @@ public class FunnoteTests {
 		
 		model.getSection().updatePage("testUrl");
 		assertEquals(model.getSection().getCanvasURL(), "testUrl");
+		assertEquals(model.getCurrGC(), "testUrl");
 	}
 	
 	@Test
