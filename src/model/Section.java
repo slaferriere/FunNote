@@ -58,5 +58,4 @@ public class Section implements Serializable {
 		pages.put(page, new Page(canvasURL));
 		currPage = pages.get(page);
 	}
-
 }

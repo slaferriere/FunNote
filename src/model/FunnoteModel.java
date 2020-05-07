@@ -242,7 +242,6 @@ public class FunnoteModel extends Observable {
 				this.notifyObservers("blank page");
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -260,6 +259,21 @@ public class FunnoteModel extends Observable {
 	}
 	
 	/**
+	 * This method gets the current section
+	 * @return Section current section
+	 */
+	public Section getSection() {
+		return currNotebook.currSection;
+	}
+	
+	/**
+	 * This method gets the current page
+	 * @return Page current page
+	 */
+	public Page getPage() {
+		return currNotebook.currSection.currPage;
+	}
+	/**
 	 * This method clears all the saved Textboxes on the current Page
 	 * 
 	 */
@@ -273,6 +287,15 @@ public class FunnoteModel extends Observable {
 	 */
 	public void addTextBox(TextboxNode node) {
 		currNotebook.currSection.currPage.textboxes.add(node);
+	}
+	
+	/**
+	 * This method gets a TextboxNode from the page
+	 * @param node
+	 * @return 
+	 */
+	public TextboxNode getTextBox(TextboxNode node) {
+		return currNotebook.currSection.currPage.textboxes.get(0);
 	}
 	
 	/**
