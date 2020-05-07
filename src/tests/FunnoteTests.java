@@ -20,7 +20,9 @@ import model.FunnoteModel;
 import model.TextboxNode;
 
 /**
- * This class collects all of the test methods for FunnoteController.java.
+ * This class collects all NON-GUI related test cases for Notebook.java,
+ * Section.java, Page.java, TextboxNode.java, FunnoteController.java, and 
+ * FunnoteModel.java.
  * 
  * In eclipse, run using JUnit 5.
  * 
